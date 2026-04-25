@@ -117,10 +117,6 @@ def safe_mean_from_map(mapping, default=0):
         return default
 
 
-# =========================
-# BUILD INPUT DATAFRAME
-# =========================
-
 def build_city_profile_dataframe(user_profile):
     cities = get_available_cities()
 
@@ -218,12 +214,13 @@ def build_features(df):
         if col not in df.columns:
             df[col] = "unknown"
 
-    X_small_ohe = pd.get_dummies(df[small_cat_cols], sparse=True)
+X_small_ohe = pd.get_dummies(df[small_cat_cols])
 
-    if small_cat_ohe_columns is not None:
-        X_small_ohe = X_small_ohe.reindex(columns=small_cat_ohe_columns, fill_value=0)
+if small_cat_ohe_columns is not None:
+    X_small_ohe = X_small_ohe.reindex(columns=small_cat_ohe_columns, fill_value=0)
 
-    X_small_ohe_sparse = X_small_ohe.sparse.to_coo().tocsr()
+X_small_ohe_sparse = csr_matrix(X_small_ohe.astype(float).values)
+
 
     # Skills
     X_key = csr_matrix(mlb_key.transform(df["key_skills_list"]))
