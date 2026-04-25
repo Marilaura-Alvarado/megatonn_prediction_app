@@ -10,7 +10,6 @@ from scipy.sparse import hstack, csr_matrix
 BASE_PATH = "."
 
 
-
 def load_file(filename):
     path = os.path.join(BASE_PATH, filename)
 
@@ -23,7 +22,6 @@ def load_file(filename):
 
 
 model = load_file("best_salary_model.pkl")
-
 scaler = load_file("scaler.pkl")
 
 mlb_key = load_file("mlb_key.pkl")
@@ -32,7 +30,7 @@ mlb_soft = load_file("mlb_soft.pkl")
 
 train_meta = load_file("train_meta.pkl")
 
-# Optional artifacts
+
 try:
     tfidf_role_word = load_file("tfidf_role_word.pkl")
 except Exception:
@@ -72,7 +70,6 @@ try:
     small_cat_ohe_columns = load_file("small_cat_ohe_columns.pkl")
 except Exception:
     small_cat_ohe_columns = None
-
 
 
 def get_available_cities():
@@ -172,23 +169,18 @@ def build_city_profile_dataframe(user_profile):
     return df
 
 
-
-
 def build_features(df):
     df = df.copy()
 
-    # Frequency encoding
     for col, mapping in freq_maps.items():
         if col in df.columns:
             df[col + "_freq"] = df[col].astype(str).map(mapping).fillna(0)
 
-    # Target encoding
     for col, mapping in target_encoding_maps.items():
         if col in df.columns:
             default_value = safe_mean_from_map(mapping)
             df[col + "_target_oof"] = df[col].astype(str).map(mapping).fillna(default_value)
 
-    # Salary anchors
     anchor_name_map = {
         "city": "city_avg_salary",
         "role_name": "role_avg_salary",
@@ -201,7 +193,6 @@ def build_features(df):
             output_col = anchor_name_map.get(col, col + "_avg_salary")
             df[output_col] = df[col].astype(str).map(mapping).fillna(default_value)
 
-    # Numeric columns
     for col in numeric_cols:
         if col not in df.columns:
             df[col] = 0
@@ -209,20 +200,17 @@ def build_features(df):
     X_numeric_df = df[numeric_cols].apply(pd.to_numeric, errors="coerce").fillna(0)
     X_numeric = csr_matrix(scaler.transform(X_numeric_df))
 
-    # Small categorical columns
     for col in small_cat_cols:
         if col not in df.columns:
             df[col] = "unknown"
 
-X_small_ohe = pd.get_dummies(df[small_cat_cols])
+    X_small_ohe = pd.get_dummies(df[small_cat_cols])
 
-if small_cat_ohe_columns is not None:
-    X_small_ohe = X_small_ohe.reindex(columns=small_cat_ohe_columns, fill_value=0)
+    if small_cat_ohe_columns is not None:
+        X_small_ohe = X_small_ohe.reindex(columns=small_cat_ohe_columns, fill_value=0)
 
-X_small_ohe_sparse = csr_matrix(X_small_ohe.astype(float).values)
+    X_small_ohe_sparse = csr_matrix(X_small_ohe.astype(float).values)
 
-
-    # Skills
     X_key = csr_matrix(mlb_key.transform(df["key_skills_list"]))
     X_hard = csr_matrix(mlb_hard.transform(df["hard_skills_list"]))
     X_soft = csr_matrix(mlb_soft.transform(df["soft_skills_list"]))
@@ -235,7 +223,6 @@ X_small_ohe_sparse = csr_matrix(X_small_ohe.astype(float).values)
         X_soft
     ]
 
-
     if tfidf_role_word is not None:
         feature_blocks.append(tfidf_role_word.transform(df["role_name"]))
 
@@ -245,7 +232,6 @@ X_small_ohe_sparse = csr_matrix(X_small_ohe.astype(float).values)
     X_final = hstack(feature_blocks).tocsr()
 
     return X_final
-
 
 
 def predict_all_cities(user_profile):
