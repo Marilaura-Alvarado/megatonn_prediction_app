@@ -1,4 +1,4 @@
-[27/4/2026 01:02] Marilaura Alvarado: import streamlit as st
+import streamlit as st
 import plotly.express as px
 
 from inference import (
