@@ -186,28 +186,57 @@ st.markdown(
         color: #111827 !important;
     }
 
-    section[data-testid="stSidebar"] [data-baseweb="tag"] {
-    background-color: #ffffff !important;
-    border: 1px solid #cbd5e1 !important;
-    border-radius: 999px !important;
-    color: #111827 !important;
-    max-width: 260px !important;
-    overflow: hidden !important;
-    display: flex !important;
+    /* Make all select containers stop clipping content */
+section[data-testid="stSidebar"] div[data-baseweb="select"],
+section[data-testid="stSidebar"] div[data-baseweb="select"] * {
+    overflow: visible !important;
 }
 
+/* Main select input box */
+section[data-testid="stSidebar"] div[data-baseweb="select"] > div {
+    background-color: #ffffff !important;
+    border-radius: 14px !important;
+    color: #111827 !important;
+    min-height: 46px !important;
+    padding-left: 18px !important;
+    padding-right: 12px !important;
+}
+
+/* Selected tags */
+section[data-testid="stSidebar"] [data-baseweb="tag"] {
+    background-color: #e0f2fe !important;
+    border: 1px solid #60a5fa !important;
+    border-radius: 999px !important;
+    color: #0f172a !important;
+
+    margin-left: 12px !important;
+    padding-left: 14px !important;
+    padding-right: 8px !important;
+
+    max-width: 245px !important;
+    min-width: fit-content !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+
+    transform: translateX(8px) !important;
+}
+
+/* Tag text */
 section[data-testid="stSidebar"] [data-baseweb="tag"] span,
 section[data-testid="stSidebar"] [data-baseweb="tag"] div {
-    color: #111827 !important;
-    font-weight: 700 !important;
+    color: #0f172a !important;
+    font-weight: 800 !important;
     white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
 }
 
+/* X icon */
 section[data-testid="stSidebar"] [data-baseweb="tag"] svg {
-    fill: #111827 !important;
-    color: #111827 !important;
+    fill: #0f172a !important;
+    color: #0f172a !important;
+    margin-left: 6px !important;
 }
 
     section[data-testid="stSidebar"] [data-testid="stCaptionContainer"] {
