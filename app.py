@@ -160,8 +160,7 @@ years = st.sidebar.slider(T["experience_years"], 0, 15, 2)
 exp_id = experience_id_from_years(years)
 
 schedule = st.sidebar.selectbox(T["schedule"], ["fullDay", "remote", "flexible", "shift"])
-employment = st.
-sidebar.selectbox(T["employment_type"], ["full", "part", "project"])
+employment = st.sidebar.selectbox(T["employment_type"], ["full", "part", "project"])
 
 k = st.sidebar.multiselect(T["key_skills"], key_sk)
 h = st.sidebar.multiselect(T["hard_skills"], hard_sk)
