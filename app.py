@@ -12,16 +12,21 @@ from inference import (
     experience_id_from_years
 )
 
+
 st.set_page_config(
     page_title="Megatonn Salary Prediction Platform",
     page_icon="💼",
     layout="wide"
 )
 
+
 LANG = st.sidebar.selectbox("Language / Язык", ["English", "Русский"])
 
 TEXT = {
     "English": {
+        "title": "AI Salary Prediction Platform",
+        "company": "for Megatonn",
+        "subtitle": "Compare how the same professional profile is valued across different cities.",
         "profile_input": "Profile Input",
         "position": "Position",
         "write_position": "Write position",
@@ -61,9 +66,13 @@ TEXT = {
         "full_time": "Full time",
         "part_time": "Part time",
         "project_contract": "Project contract",
-        "range": "Range"
+        "range": "Range",
+        "selected": "Selected"
     },
     "Русский": {
+        "title": "AI-платформа прогнозирования зарплат",
+        "company": "для Megatonn",
+        "subtitle": "Сравните, как один и тот же профессиональный профиль оценивается в разных городах.",
         "profile_input": "Параметры профиля",
         "position": "Должность",
         "write_position": "Введите должность",
@@ -103,15 +112,23 @@ TEXT = {
         "full_time": "Полная занятость",
         "part_time": "Частичная занятость",
         "project_contract": "Проектный контракт",
-        "range": "Диапазон"
+        "range": "Диапазон",
+        "selected": "Выбрано"
     }
 }
 
 T = TEXT[LANG]
 
+
 st.markdown(
     """
     <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+    html, body, [class*="css"] {
+        font-family: 'Inter', sans-serif;
+    }
+
     .stApp {
         background:
             radial-gradient(circle at top left, rgba(99,102,241,0.18), transparent 32%),
@@ -127,6 +144,7 @@ st.markdown(
 
     section[data-testid="stSidebar"] {
         background: linear-gradient(180deg, #111827 0%, #172033 55%, #0f172a 100%);
+        border-right: 1px solid rgba(255,255,255,0.08);
         width: 360px !important;
         min-width: 360px !important;
     }
@@ -137,6 +155,7 @@ st.markdown(
     }
 
     section[data-testid="stSidebar"] label,
+    section[data-testid="stSidebar"] .stMarkdown,
     section[data-testid="stSidebar"] h1,
     section[data-testid="stSidebar"] h2,
     section[data-testid="stSidebar"] h3 {
@@ -150,68 +169,99 @@ st.markdown(
         border-radius: 14px !important;
     }
 
-    section[data-testid="stSidebar"] div[data-baseweb="select"],
-    section[data-testid="stSidebar"] div[data-baseweb="select"] * {
-        overflow: visible !important;
-    }
-
     section[data-testid="stSidebar"] div[data-baseweb="select"] > div {
         background-color: #ffffff !important;
         border-radius: 14px !important;
         color: #111827 !important;
         min-height: 46px !important;
-        padding-left: 18px !important;
-        padding-right: 12px !important;
+        padding-left: 12px !important;
     }
 
-    section[data-testid="stSidebar"] div[data-baseweb="select"] span,
-    section[data-testid="stSidebar"] div[data-baseweb="select"] input {
+    section[data-testid="stSidebar"] div[data-baseweb="select"] span {
         color: #111827 !important;
         font-weight: 650 !important;
     }
 
-    section[data-testid="stSidebar"] [data-baseweb="tag"] {
-        background-color: #e0f2fe !important;
-        border: 1px solid #60a5fa !important;
-        border-radius: 999px !important;
-        color: #0f172a !important;
-        margin-left: 12px !important;
-        padding-left: 14px !important;
-        padding-right: 8px !important;
-        max-width: 245px !important;
-        min-width: fit-content !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        transform: translateX(8px) !important;
-    }
-
-    section[data-testid="stSidebar"] [data-baseweb="tag"] span,
-    section[data-testid="stSidebar"] [data-baseweb="tag"] div {
-        color: #0f172a !important;
-        font-weight: 800 !important;
-        white-space: nowrap !important;
-        overflow: visible !important;
-        text-overflow: clip !important;
-    }
-
-    section[data-testid="stSidebar"] [data-baseweb="tag"] svg {
-        fill: #0f172a !important;
-        color: #0f172a !important;
-        margin-left: 6px !important;
-    }
-
-    div[role="listbox"],
-    div[role="option"] {
-        background-color: #ffffff !important;
+    section[data-testid="stSidebar"] div[data-baseweb="select"] input {
         color: #111827 !important;
+    }
+
+    section[data-testid="stSidebar"] [data-baseweb="tag"] {
+        display: none !important;
+    }
+
+    section[data-testid="stSidebar"] [data-testid="stCaptionContainer"] {
+        color: #dbeafe !important;
+        font-weight: 700 !important;
+        line-height: 1.5 !important;
+        margin-top: -8px !important;
+        margin-bottom: 14px !important;
+        font-size: 13px !important;
+    }
+
+    div[role="listbox"] {
+        background-color: #ffffff !important;
+    }
+
+    div[role="option"] {
+        color: #111827 !important;
+        background-color: #ffffff !important;
     }
 
     div[role="option"] span {
         color: #111827 !important;
     }
 
+    .hero {
+        position: relative;
+        overflow: hidden;
+        padding: 42px 44px;
+        border-radius: 34px;
+        background:
+            radial-gradient(circle at 18% 20%, rgba(255,255,255,0.25), transparent 22%),
+            linear-gradient(135deg, #0f172a 0%, #312e81 42%, #0f766e 100%);
+        color: white;
+        box-shadow: 0px 28px 70px rgba(30, 41, 59, 0.26);
+        margin-bottom: 28px;
+    }
+
+    .hero-badge {
+        display: inline-block;
+        padding: 9px 16px;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.14);
+        border: 1px solid rgba(255,255,255,0.22);
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 18px;
+        letter-spacing: 0.3px;
+    }
+
+    .hero-title {
+        font-size: 50px;
+        font-weight: 900;
+        letter-spacing: -1.4px;
+        margin-bottom: 6px;
+        line-height: 1.04;
+    }
+
+    .hero-company {
+        font-size: 25px;
+        font-weight: 750;
+        color: rgba(255,255,255,0.88);
+        margin-bottom: 16px;
+    }
+
+    .hero-subtitle {
+        font-size: 18px;
+        max-width: 850px;
+        color: rgba(255,255,255,0.84);
+        line-height: 1.65;
+    }
+
     .info-card {
         background: rgba(255,255,255,0.78);
+        backdrop-filter: blur(16px);
         border: 1px solid rgba(148, 163, 184, 0.28);
         border-radius: 22px;
         padding: 19px 23px;
@@ -227,6 +277,7 @@ st.markdown(
         padding: 25px 24px;
         border-radius: 26px;
         box-shadow: 0px 18px 42px rgba(15,23,42,0.08);
+        text-align: left;
         min-height: 142px;
     }
 
@@ -308,6 +359,7 @@ st.markdown(
     .stButton>button:hover {
         background: linear-gradient(135deg, #4338ca 0%, #0d9488 100%);
         color: white;
+        transform: translateY(-1px);
     }
 
     div[data-testid="stDataFrame"] {
@@ -318,6 +370,12 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
+
+def show_selected(label, values):
+    if values:
+        st.sidebar.caption(f"{label}: " + ", ".join(values))
+
 
 available_cities = get_available_cities()
 available_positions = get_available_positions()
@@ -339,6 +397,7 @@ employment_label_to_value = {
     T["part_time"]: "part",
     T["project_contract"]: "project"
 }
+
 
 st.sidebar.header(T["profile_input"])
 
@@ -367,16 +426,35 @@ schedule_id = schedule_label_to_value[selected_schedule_label]
 selected_employment_label = st.sidebar.selectbox(T["employment_type"], list(employment_label_to_value.keys()))
 employment_id = employment_label_to_value[selected_employment_label]
 
-selected_key_skills = st.sidebar.multiselect(T["key_skills"], key_skill_options)
-selected_hard_skills = st.sidebar.multiselect(T["hard_skills"], hard_skill_options)
-selected_soft_skills = st.sidebar.multiselect(T["soft_skills"], soft_skill_options)
+selected_key_skills = st.sidebar.multiselect(
+    T["key_skills"],
+    key_skill_options,
+    placeholder=T["key_skills"]
+)
+show_selected(T["selected"], selected_key_skills)
+
+selected_hard_skills = st.sidebar.multiselect(
+    T["hard_skills"],
+    hard_skill_options,
+    placeholder=T["hard_skills"]
+)
+show_selected(T["selected"], selected_hard_skills)
+
+selected_soft_skills = st.sidebar.multiselect(
+    T["soft_skills"],
+    soft_skill_options,
+    placeholder=T["soft_skills"]
+)
+show_selected(T["selected"], selected_soft_skills)
 
 city_options = [T["all_cities"]] + available_cities
 selected_cities = st.sidebar.multiselect(
     T["cities"],
     city_options,
-    default=[T["all_cities"]]
+    default=[T["all_cities"]],
+    placeholder=T["cities"]
 )
+show_selected(T["selected"], selected_cities)
 
 predict_button = st.sidebar.button(T["predict"])
 
@@ -384,6 +462,19 @@ if T["all_cities"] in selected_cities or len(selected_cities) == 0:
     final_selected_cities = available_cities
 else:
     final_selected_cities = selected_cities
+
+
+st.markdown(
+    f"""
+    <div class="hero">
+        <div class="hero-badge">AI Powered Market Salary Intelligence</div>
+        <div class="hero-title">{T["title"]}</div>
+        <div class="hero-company">{T["company"]}</div>
+        <div class="hero-subtitle">{T["subtitle"]}</div>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 st.markdown(
     f"""
@@ -393,6 +484,7 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
 
 if predict_button:
 
@@ -425,11 +517,11 @@ if predict_button:
             st.error("No predictions available.")
             st.stop()
 
-        uncertainty_rate = 0.15
+        UNCERTAINTY_RATE = 0.15
 
         results["predicted_salary"] = results["predicted_salary"].round(0).astype(int)
-        results["salary_min"] = (results["predicted_salary"] * (1 - uncertainty_rate)).round(0).astype(int)
-        results["salary_max"] = (results["predicted_salary"] * (1 + uncertainty_rate)).round(0).astype(int)
+        results["salary_min"] = (results["predicted_salary"] * (1 - UNCERTAINTY_RATE)).round(0).astype(int)
+        results["salary_max"] = (results["predicted_salary"] * (1 + UNCERTAINTY_RATE)).round(0).astype(int)
         results["error_plus"] = results["salary_max"] - results["predicted_salary"]
         results["error_minus"] = results["predicted_salary"] - results["salary_min"]
 
@@ -543,7 +635,11 @@ if predict_button:
         texttemplate="%{text:,.0f} ₽",
         textposition="outside",
         marker_line_width=0,
-        error_y=dict(thickness=1.6, width=7, color="#334155"),
+        error_y=dict(
+            thickness=1.6,
+            width=7,
+            color="#334155"
+        ),
         hovertemplate=(
             "<b>%{x}</b><br>"
             "Predicted: %{y:,.0f} ₽<br>"
@@ -557,7 +653,7 @@ if predict_button:
         height=600,
         plot_bgcolor="rgba(255,255,255,0)",
         paper_bgcolor="rgba(255,255,255,0)",
-        font=dict(size=14, color="#334155"),
+        font=dict(family="Inter", size=14, color="#334155"),
         title=dict(font=dict(size=22, color="#111827")),
         xaxis=dict(title="", tickangle=-25, gridcolor="rgba(148,163,184,0.13)"),
         yaxis=dict(title="Predicted Salary, RUB", gridcolor="rgba(148,163,184,0.25)"),
@@ -589,7 +685,13 @@ if predict_button:
         })
 
     st.markdown('<div class="table-card">', unsafe_allow_html=True)
-    st.dataframe(results_display, use_container_width=True, hide_index=True)
+
+    st.dataframe(
+        results_display,
+        use_container_width=True,
+        hide_index=True
+    )
+
     st.markdown('</div>', unsafe_allow_html=True)
 
     csv = results_display.to_csv(index=False).encode("utf-8")
