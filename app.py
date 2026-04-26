@@ -24,9 +24,6 @@ LANG = st.sidebar.selectbox("Language / Язык", ["English", "Русский"]
 
 TEXT = {
     "English": {
-        "title": "AI Salary Prediction Platform",
-        "company": "for Megatonn",
-        "subtitle": "Compare how the same professional profile is valued across different cities.",
         "profile_input": "Profile Input",
         "position": "Position",
         "write_position": "Write position",
@@ -41,7 +38,6 @@ TEXT = {
         "cities": "Cities",
         "all_cities": "All cities",
         "predict": "Generate salary forecast",
-        "info": "Forecast will be generated for {n} city/cities using one fixed profile.",
         "spinner": "Calculating salary predictions...",
         "error_position": "Please enter or select a position before predicting.",
         "error_skills": "Please select at least one skill before predicting.",
@@ -70,9 +66,6 @@ TEXT = {
         "selected": "Selected"
     },
     "Русский": {
-        "title": "AI-платформа прогнозирования зарплат",
-        "company": "для Megatonn",
-        "subtitle": "Сравните, как один и тот же профессиональный профиль оценивается в разных городах.",
         "profile_input": "Параметры профиля",
         "position": "Должность",
         "write_position": "Введите должность",
@@ -513,7 +506,7 @@ else:
 st.markdown(
     f"""
     <div class="hero">
-        <div class="hero-badge">AI Powered Market Salary Intelligence</div>
+        <div class="hero-badge">AI Salary Prediction Platform</div>
         <div class="hero-title">{T["title"]}</div>
         <div class="hero-company">{T["company"]}</div>
         <div class="hero-subtitle">{T["subtitle"]}</div>
