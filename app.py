@@ -25,8 +25,8 @@ LANG = st.sidebar.selectbox("Language / Язык", ["English", "Русский"]
 TEXT = {
     "English": {
         "title": "AI Salary Prediction Platform",
-        "company": "for Megatonn",
-        "subtitle": "Compare how the same professional profile is valued across different cities.",
+        "company": "",
+        "subtitle": "",
         "profile_input": "Profile Input",
         "position": "Position",
         "write_position": "Write position",
