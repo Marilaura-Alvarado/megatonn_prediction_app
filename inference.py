@@ -30,50 +30,44 @@ mlb_soft = load_file("mlb_soft.pkl")
 
 train_meta = load_file("train_meta.pkl")
 
+tfidf_role_word = load_file("tfidf_role_word.pkl")
+tfidf_role_char = load_file("tfidf_role_char.pkl")
 
-try:
-    tfidf_role_word = load_file("tfidf_role_word.pkl")
-except Exception:
-    tfidf_role_word = None
+freq_maps = load_file("freq_maps.pkl")
+target_encoding_maps = load_file("target_encoding_maps.pkl")
+salary_anchor_maps = load_file("salary_anchor_maps.pkl")
 
-try:
-    tfidf_role_char = load_file("tfidf_role_char.pkl")
-except Exception:
-    tfidf_role_char = None
-
-try:
-    freq_maps = load_file("freq_maps.pkl")
-except Exception:
-    freq_maps = {}
-
-try:
-    target_encoding_maps = load_file("target_encoding_maps.pkl")
-except Exception:
-    target_encoding_maps = {}
-
-try:
-    salary_anchor_maps = load_file("salary_anchor_maps.pkl")
-except Exception:
-    salary_anchor_maps = {}
-
-try:
-    numeric_cols = load_file("numeric_cols.pkl")
-except Exception:
-    numeric_cols = ["experience_years"]
-
-try:
-    small_cat_cols = load_file("small_cat_cols.pkl")
-except Exception:
-    small_cat_cols = ["experience_id", "schedule_id", "employment_id", "seniority"]
-
-try:
-    small_cat_ohe_columns = load_file("small_cat_ohe_columns.pkl")
-except Exception:
-    small_cat_ohe_columns = None
+numeric_cols = load_file("numeric_cols.pkl")
+small_cat_cols = load_file("small_cat_cols.pkl")
+small_cat_ohe_columns = load_file("small_cat_ohe_columns.pkl")
 
 
 def get_available_cities():
     return sorted(train_meta["city"].dropna().astype(str).unique())
+
+
+def get_available_positions():
+    if "role_name" in train_meta.columns:
+        return sorted(train_meta["role_name"].dropna().astype(str).unique())
+    return []
+
+
+def get_available_role_areas():
+    if "role_area" in train_meta.columns:
+        return sorted(train_meta["role_area"].dropna().astype(str).unique())
+    return []
+
+
+def get_available_key_skills():
+    return sorted([str(x) for x in mlb_key.classes_])
+
+
+def get_available_hard_skills():
+    return sorted([str(x) for x in mlb_hard.classes_])
+
+
+def get_available_soft_skills():
+    return sorted([str(x) for x in mlb_soft.classes_])
 
 
 def parse_skills(text):
@@ -104,6 +98,16 @@ def get_seniority(years):
     return "senior"
 
 
+def experience_id_from_years(years):
+    if years == 0:
+        return "noExperience"
+    elif years <= 3:
+        return "between1And3"
+    elif years <= 6:
+        return "between3And6"
+    return "moreThan6"
+
+
 def safe_mean_from_map(mapping, default=0):
     try:
         values = list(mapping.values())
@@ -115,14 +119,19 @@ def safe_mean_from_map(mapping, default=0):
 
 
 def build_city_profile_dataframe(user_profile):
-    cities = get_available_cities()
+    selected_cities = user_profile.get("selected_cities", None)
+
+    if selected_cities is None or len(selected_cities) == 0:
+        cities = get_available_cities()
+    else:
+        cities = selected_cities
 
     key_skills_list = parse_skills(user_profile.get("key_skills", ""))
     hard_skills_list = parse_skills(user_profile.get("hard_skills", ""))
     soft_skills_list = parse_skills(user_profile.get("soft_skills", ""))
 
     experience_years = int(user_profile.get("experience_years", 0))
-    experience_id = user_profile.get("experience_id", "unknown")
+    experience_id = user_profile.get("experience_id", experience_id_from_years(experience_years))
     schedule_id = user_profile.get("schedule_id", "unknown")
     employment_id = user_profile.get("employment_id", "unknown")
 
@@ -206,8 +215,10 @@ def build_features(df):
 
     X_small_ohe = pd.get_dummies(df[small_cat_cols])
 
-    if small_cat_ohe_columns is not None:
-        X_small_ohe = X_small_ohe.reindex(columns=small_cat_ohe_columns, fill_value=0)
+    X_small_ohe = X_small_ohe.reindex(
+        columns=small_cat_ohe_columns,
+        fill_value=0
+    )
 
     X_small_ohe_sparse = csr_matrix(X_small_ohe.astype(float).values)
 
@@ -215,21 +226,18 @@ def build_features(df):
     X_hard = csr_matrix(mlb_hard.transform(df["hard_skills_list"]))
     X_soft = csr_matrix(mlb_soft.transform(df["soft_skills_list"]))
 
-    feature_blocks = [
+    X_role_word = tfidf_role_word.transform(df["role_name"])
+    X_role_char = tfidf_role_char.transform(df["role_name"])
+
+    X_final = hstack([
         X_numeric,
         X_small_ohe_sparse,
         X_key,
         X_hard,
-        X_soft
-    ]
-
-    if tfidf_role_word is not None:
-        feature_blocks.append(tfidf_role_word.transform(df["role_name"]))
-
-    if tfidf_role_char is not None:
-        feature_blocks.append(tfidf_role_char.transform(df["role_name"]))
-
-    X_final = hstack(feature_blocks).tocsr()
+        X_soft,
+        X_role_word,
+        X_role_char
+    ]).tocsr()
 
     return X_final
 
