@@ -22,7 +22,6 @@ st.set_page_config(
 
 LANG = st.sidebar.selectbox("Language / Язык", ["English", "Русский"])
 
-
 TEXT = {
     "English": {
         "title": "AI Salary Prediction Platform",
@@ -67,7 +66,8 @@ TEXT = {
         "full_time": "Full time",
         "part_time": "Part time",
         "project_contract": "Project contract",
-        "range": "Range"
+        "range": "Range",
+        "selected": "Selected"
     },
     "Русский": {
         "title": "AI-платформа прогнозирования зарплат",
@@ -112,7 +112,8 @@ TEXT = {
         "full_time": "Полная занятость",
         "part_time": "Частичная занятость",
         "project_contract": "Проектный контракт",
-        "range": "Диапазон"
+        "range": "Диапазон",
+        "selected": "Выбрано"
     }
 }
 
@@ -174,7 +175,6 @@ st.markdown(
         color: #111827 !important;
         min-height: 46px !important;
         padding-left: 12px !important;
-        overflow: visible !important;
     }
 
     section[data-testid="stSidebar"] div[data-baseweb="select"] span {
@@ -184,35 +184,19 @@ st.markdown(
 
     section[data-testid="stSidebar"] div[data-baseweb="select"] input {
         color: #111827 !important;
-        padding-left: 8px !important;
     }
 
     section[data-testid="stSidebar"] [data-baseweb="tag"] {
-        background-color: #dbeafe !important;
-        border: 1px solid #60a5fa !important;
-        border-radius: 999px !important;
-        color: #0f172a !important;
-        max-width: 285px !important;
-        min-width: auto !important;
-        padding-left: 14px !important;
-        padding-right: 8px !important;
-        margin-left: 8px !important;
-        overflow: hidden !important;
+        display: none !important;
     }
 
-    section[data-testid="stSidebar"] [data-baseweb="tag"] span,
-    section[data-testid="stSidebar"] [data-baseweb="tag"] div {
-        color: #0f172a !important;
-        font-weight: 800 !important;
-        white-space: nowrap !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-    }
-
-    section[data-testid="stSidebar"] [data-baseweb="tag"] svg {
-        fill: #0f172a !important;
-        color: #0f172a !important;
-        margin-left: 4px !important;
+    section[data-testid="stSidebar"] [data-testid="stCaptionContainer"] {
+        color: #dbeafe !important;
+        font-weight: 700 !important;
+        line-height: 1.5 !important;
+        margin-top: -8px !important;
+        margin-bottom: 14px !important;
+        font-size: 13px !important;
     }
 
     div[role="listbox"] {
@@ -388,6 +372,11 @@ st.markdown(
 )
 
 
+def show_selected(label, values):
+    if values:
+        st.sidebar.caption(f"{label}: " + ", ".join(values))
+
+
 available_cities = get_available_cities()
 available_positions = get_available_positions()
 available_role_areas = get_available_role_areas()
@@ -437,12 +426,35 @@ schedule_id = schedule_label_to_value[selected_schedule_label]
 selected_employment_label = st.sidebar.selectbox(T["employment_type"], list(employment_label_to_value.keys()))
 employment_id = employment_label_to_value[selected_employment_label]
 
-selected_key_skills = st.sidebar.multiselect(T["key_skills"], key_skill_options)
-selected_hard_skills = st.sidebar.multiselect(T["hard_skills"], hard_skill_options)
-selected_soft_skills = st.sidebar.multiselect(T["soft_skills"], soft_skill_options)
+selected_key_skills = st.sidebar.multiselect(
+    T["key_skills"],
+    key_skill_options,
+    placeholder=T["key_skills"]
+)
+show_selected(T["selected"], selected_key_skills)
+
+selected_hard_skills = st.sidebar.multiselect(
+    T["hard_skills"],
+    hard_skill_options,
+    placeholder=T["hard_skills"]
+)
+show_selected(T["selected"], selected_hard_skills)
+
+selected_soft_skills = st.sidebar.multiselect(
+    T["soft_skills"],
+    soft_skill_options,
+    placeholder=T["soft_skills"]
+)
+show_selected(T["selected"], selected_soft_skills)
 
 city_options = [T["all_cities"]] + available_cities
-selected_cities = st.sidebar.multiselect(T["cities"], city_options, default=[T["all_cities"]])
+selected_cities = st.sidebar.multiselect(
+    T["cities"],
+    city_options,
+    default=[T["all_cities"]],
+    placeholder=T["cities"]
+)
+show_selected(T["selected"], selected_cities)
 
 predict_button = st.sidebar.button(T["predict"])
 
