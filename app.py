@@ -138,6 +138,8 @@ st.info(
 
 if predict_button:
 
+    with st.spinner("Calculating salary predictions..."):
+        
     # validation
     if not role_name.strip():
         st.error("Please enter a position before predicting.")
