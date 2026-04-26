@@ -139,36 +139,35 @@ st.info(
 if predict_button:
 
     with st.spinner("Calculating salary predictions..."):
-        
-    # validation
-    if not role_name.strip():
-        st.error("Please enter a position before predicting.")
-        st.stop()
 
-    if not key_skills.strip() and not hard_skills.strip() and not soft_skills.strip():
-        st.error("Please enter at least one skill before predicting.")
-        st.stop()
+        # validation
+        if not role_name.strip():
+            st.error("Please enter a position before predicting.")
+            st.stop()
 
-    # build profile
-    user_profile = {
-        "role_name": role_name,
-        "role_area": role_area,
-        "experience_years": experience_years,
-        "experience_id": experience_id,
-        "schedule_id": schedule_id,
-        "employment_id": employment_id,
-        "key_skills": key_skills,
-        "hard_skills": hard_skills,
-        "soft_skills": soft_skills
-    }
+        if not key_skills.strip() and not hard_skills.strip() and not soft_skills.strip():
+            st.error("Please enter at least one skill before predicting.")
+            st.stop()
 
-    results = predict_all_cities(user_profile)
+        # build profile
+        user_profile = {
+            "role_name": role_name,
+            "role_area": role_area,
+            "experience_years": experience_years,
+            "experience_id": experience_id,
+            "schedule_id": schedule_id,
+            "employment_id": employment_id,
+            "key_skills": key_skills,
+            "hard_skills": hard_skills,
+            "soft_skills": soft_skills
+        }
 
-    top_city = results.iloc[0]
-    bottom_city = results.iloc[-1]
-    avg_salary = results["predicted_salary"].mean()
-    salary_gap = top_city["predicted_salary"] - bottom_city["predicted_salary"]
+        results = predict_all_cities(user_profile)
 
+        top_city = results.iloc[0]
+        bottom_city = results.iloc[-1]
+        avg_salary = results["predicted_salary"].mean()
+        salary_gap = top_city["predicted_salary"] - bottom_city["predicted_salary"]
 
     col1, col2, col3, col4 = st.columns(4)
 
