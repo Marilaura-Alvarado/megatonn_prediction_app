@@ -14,7 +14,7 @@ from inference import (
 
 
 st.set_page_config(
-    page_title="Megatonn Salary Prediction Platform",
+    page_title=" AI Salary Prediction Platform by Megatonn ",
     page_icon="💼",
     layout="wide"
 )
