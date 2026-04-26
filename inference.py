@@ -1,509 +1,268 @@
-import streamlit as st
-import plotly.express as px
-
-from inference import (
-    predict_all_cities,
-    get_available_cities,
-    get_available_positions,
-    get_available_role_areas,
-    get_available_key_skills,
-    get_available_hard_skills,
-    get_available_soft_skills,
-    experience_id_from_years
-)
-
-
-st.set_page_config(
-    page_title="Megatonn Salary Prediction Platform",
-    page_icon="💼",
-    layout="wide"
-)
-
-
-# =========================
-# LANGUAGE
-# =========================
-
-LANG = st.sidebar.selectbox("Language / Язык", ["English", "Русский"])
-
-TEXT = {
-    "English": {
-        "title": "AI Salary Prediction Platform for Megatonn",
-        "subtitle": "Enter one profile once and compare predicted salary across selected cities.",
-        "profile_input": "Profile Input",
-        "position": "Position",
-        "write_position": "Write position",
-        "role_area": "Role area",
-        "write_role_area": "Write role area",
-        "experience_years": "Experience years",
-        "schedule": "Schedule",
-        "employment_type": "Employment type",
-        "key_skills": "Key skills",
-        "hard_skills": "Hard skills",
-        "soft_skills": "Soft skills",
-        "cities": "Cities",
-        "all_cities": "All cities",
-        "predict": "Predict salaries",
-        "info": "The system will generate predictions for {n} city/cities using the same profile.",
-        "spinner": "Calculating salary predictions...",
-        "error_position": "Please enter or select a position before predicting.",
-        "error_skills": "Please select at least one skill before predicting.",
-        "error_no_predictions": "No predictions available for the selected cities.",
-        "highest_city": "Highest city",
-        "highest_salary": "Highest salary",
-        "average_salary": "Average salary",
-        "city_gap": "City salary gap",
-        "main_insight": "Main Insight",
-        "insight": "For the same profile, the highest predicted salary is in {top_city} with {top_salary:,.0f} ₽, while the lowest predicted salary is in {bottom_city} with {bottom_salary:,.0f} ₽.",
-        "top_cities": "Top Cities",
-        "lowest_cities": "Lowest Cities",
-        "salary_comparison": "Salary Comparison by City",
-        "chart_title": "Predicted Salary by Selected City",
-        "xaxis": "City",
-        "yaxis": "Predicted Salary, RUB",
-        "full_ranking": "Full City Ranking",
-        "download": "Download results as CSV",
-        "how_it_works": "How it works",
-        "how_text": "Choose a position, role area, experience, schedule, employment type, skills, and cities. The system keeps the professional profile fixed and changes only the city. Then it compares predicted salaries across the selected locations.",
-        "other": "Other",
-        "on_site": "On-site",
-        "remote": "Remote",
-        "hybrid": "Hybrid",
-        "shift": "Shift",
-        "full_time": "Full time",
-        "part_time": "Part time",
-        "project_contract": "Project contract"
-    },
-    "Русский": {
-        "title": "AI-платформа прогнозирования зарплат для Megatonn",
-        "subtitle": "Введите профиль один раз и сравните прогноз зарплаты по выбранным городам.",
-        "profile_input": "Параметры профиля",
-        "position": "Должность",
-        "write_position": "Введите должность",
-        "role_area": "Профессиональная область",
-        "write_role_area": "Введите профессиональную область",
-        "experience_years": "Опыт работы, лет",
-        "schedule": "Формат работы",
-        "employment_type": "Тип занятости",
-        "key_skills": "Ключевые навыки",
-        "hard_skills": "Профессиональные навыки",
-        "soft_skills": "Гибкие навыки",
-        "cities": "Города",
-        "all_cities": "Все города",
-        "predict": "Рассчитать зарплаты",
-        "info": "Система рассчитает прогноз для {n} городов с использованием одного и того же профиля.",
-        "spinner": "Расчет прогнозов зарплаты...",
-        "error_position": "Пожалуйста, выберите или введите должность перед расчетом.",
-        "error_skills": "Пожалуйста, выберите хотя бы один навык перед расчетом.",
-        "error_no_predictions": "Для выбранных городов нет доступных прогнозов.",
-        "highest_city": "Город с максимумом",
-        "highest_salary": "Максимальная зарплата",
-        "average_salary": "Средняя зарплата",
-        "city_gap": "Разница между городами",
-        "main_insight": "Главный вывод",
-        "insight": "Для одного и того же профиля самый высокий прогноз зарплаты в городе {top_city}: {top_salary:,.0f} ₽, а самый низкий прогноз в городе {bottom_city}: {bottom_salary:,.0f} ₽.",
-        "top_cities": "Топ городов",
-        "lowest_cities": "Города с минимальной зарплатой",
-        "salary_comparison": "Сравнение зарплат по городам",
-        "chart_title": "Прогноз зарплаты по выбранным городам",
-        "xaxis": "Город",
-        "yaxis": "Прогноз зарплаты, руб.",
-        "full_ranking": "Полный рейтинг городов",
-        "download": "Скачать результаты в CSV",
-        "how_it_works": "Как это работает",
-        "how_text": "Выберите должность, профессиональную область, опыт, формат работы, тип занятости, навыки и города. Система фиксирует профессиональный профиль и меняет только город. После этого она сравнивает прогноз зарплаты по выбранным локациям.",
-        "other": "Другое",
-        "on_site": "Офис",
-        "remote": "Удаленно",
-        "hybrid": "Гибрид",
-        "shift": "Сменный график",
-        "full_time": "Полная занятость",
-        "part_time": "Частичная занятость",
-        "project_contract": "Проектный контракт"
-    }
-}
-
-T = TEXT[LANG]
-
-
-# =========================
-# CSS
-# =========================
-
-st.markdown(
-    """
-    <style>
-    .main {
-        background-color: #f7f9fc;
-    }
-
-    .big-title {
-        font-size: 42px;
-        font-weight: 800;
-        color: #1f2937;
-        margin-bottom: 0px;
-    }
-
-    .subtitle {
-        font-size: 18px;
-        color: #6b7280;
-        margin-bottom: 30px;
-    }
-
-    .metric-card {
-        background-color: white;
-        padding: 22px;
-        border-radius: 18px;
-        box-shadow: 0px 4px 16px rgba(0,0,0,0.06);
-        text-align: center;
-    }
-
-    .metric-title {
-        font-size: 14px;
-        color: #6b7280;
-        margin-bottom: 8px;
-    }
-
-    .metric-value {
-        font-size: 28px;
-        font-weight: 800;
-        color: #111827;
-    }
-
-    .section-title {
-        font-size: 24px;
-        font-weight: 700;
-        color: #111827;
-        margin-top: 25px;
-        margin-bottom: 10px;
-    }
-
-    .stButton>button {
-        width: 100%;
-        border-radius: 14px;
-        height: 48px;
-        font-weight: 700;
-        background-color: #2563eb;
-        color: white;
-        border: none;
-    }
-
-    .stButton>button:hover {
-        background-color: #1d4ed8;
-        color: white;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
-
-# =========================
-# HEADER
-# =========================
-
-st.markdown(
-    f'<div class="big-title">{T["title"]}</div>',
-    unsafe_allow_html=True
-)
-
-st.markdown(
-    f'<div class="subtitle">{T["subtitle"]}</div>',
-    unsafe_allow_html=True
-)
-
-
-# =========================
-# LOAD OPTIONS FROM PKL
-# =========================
-
-available_cities = get_available_cities()
-available_positions = get_available_positions()
-available_role_areas = get_available_role_areas()
-
-key_skill_options = get_available_key_skills()
-hard_skill_options = get_available_hard_skills()
-soft_skill_options = get_available_soft_skills()
-
-
-# =========================
-# INTERNAL VALUE MAPPINGS
-# =========================
-
-schedule_label_to_value = {
-    T["on_site"]: "fullDay",
-    T["remote"]: "remote",
-    T["hybrid"]: "flexible",
-    T["shift"]: "shift"
-}
-
-employment_label_to_value = {
-    T["full_time"]: "full",
-    T["part_time"]: "part",
-    T["project_contract"]: "project"
-}
-
-
-# =========================
-# SIDEBAR
-# =========================
-
-st.sidebar.header(T["profile_input"])
-
-position_options = available_positions + [T["other"]]
-selected_position = st.sidebar.selectbox(T["position"], position_options)
-
-if selected_position == T["other"]:
-    role_name = st.sidebar.text_input(T["write_position"], "")
-else:
-    role_name = selected_position
-
-
-role_area_options = available_role_areas + [T["other"]]
-selected_role_area = st.sidebar.selectbox(T["role_area"], role_area_options)
-
-if selected_role_area == T["other"]:
-    role_area = st.sidebar.text_input(T["write_role_area"], "")
-else:
-    role_area = selected_role_area
-
-
-experience_years = st.sidebar.slider(T["experience_years"], 0, 15, 2)
-experience_id = experience_id_from_years(experience_years)
-
-
-selected_schedule_label = st.sidebar.selectbox(
-    T["schedule"],
-    list(schedule_label_to_value.keys())
-)
-schedule_id = schedule_label_to_value[selected_schedule_label]
-
-
-selected_employment_label = st.sidebar.selectbox(
-    T["employment_type"],
-    list(employment_label_to_value.keys())
-)
-employment_id = employment_label_to_value[selected_employment_label]
-
-
-selected_key_skills = st.sidebar.multiselect(
-    T["key_skills"],
-    key_skill_options
-)
-
-selected_hard_skills = st.sidebar.multiselect(
-    T["hard_skills"],
-    hard_skill_options
-)
-
-selected_soft_skills = st.sidebar.multiselect(
-    T["soft_skills"],
-    soft_skill_options
-)
-
-
-city_options = [T["all_cities"]] + available_cities
-
-selected_cities = st.sidebar.multiselect(
-    T["cities"],
-    city_options,
-    default=[T["all_cities"]]
-)
-
-
-predict_button = st.sidebar.button(T["predict"])
-
-
-# =========================
-# CITY SELECTION
-# =========================
-
-if T["all_cities"] in selected_cities or len(selected_cities) == 0:
-    final_selected_cities = available_cities
-else:
-    final_selected_cities = selected_cities
-
-
-st.info(T["info"].format(n=len(final_selected_cities)))
-
-
-# =========================
-# PREDICTION
-# =========================
-
-if predict_button:
-
-    with st.spinner(T["spinner"]):
-
-        if not str(role_name).strip():
-            st.error(T["error_position"])
-            st.stop()
-
-        if not selected_key_skills and not selected_hard_skills and not selected_soft_skills:
-            st.error(T["error_skills"])
-            st.stop()
-
-        user_profile = {
-            "role_name": role_name,
-            "role_area": role_area,
+import os
+import re
+import joblib
+import numpy as np
+import pandas as pd
+
+from scipy.sparse import hstack, csr_matrix
+
+
+BASE_PATH = "."
+
+
+def load_file(filename):
+    path = os.path.join(BASE_PATH, filename)
+
+    if not os.path.exists(path):
+        raise FileNotFoundError(
+            f"Missing file: {filename}. Make sure it is in the same folder as app.py"
+        )
+
+    return joblib.load(path)
+
+
+model = load_file("best_salary_model.pkl")
+scaler = load_file("scaler.pkl")
+
+mlb_key = load_file("mlb_key.pkl")
+mlb_hard = load_file("mlb_hard.pkl")
+mlb_soft = load_file("mlb_soft.pkl")
+
+train_meta = load_file("train_meta.pkl")
+
+tfidf_role_word = load_file("tfidf_role_word.pkl")
+tfidf_role_char = load_file("tfidf_role_char.pkl")
+
+freq_maps = load_file("freq_maps.pkl")
+target_encoding_maps = load_file("target_encoding_maps.pkl")
+salary_anchor_maps = load_file("salary_anchor_maps.pkl")
+
+numeric_cols = load_file("numeric_cols.pkl")
+small_cat_cols = load_file("small_cat_cols.pkl")
+small_cat_ohe_columns = load_file("small_cat_ohe_columns.pkl")
+
+
+def get_available_cities():
+    return sorted(train_meta["city"].dropna().astype(str).unique())
+
+
+def get_available_positions():
+    if "role_name" in train_meta.columns:
+        return sorted(train_meta["role_name"].dropna().astype(str).unique())
+    return []
+
+
+def get_available_role_areas():
+    if "role_area" in train_meta.columns:
+        return sorted(train_meta["role_area"].dropna().astype(str).unique())
+    return []
+
+
+def get_available_key_skills():
+    return sorted([str(x) for x in mlb_key.classes_])
+
+
+def get_available_hard_skills():
+    return sorted([str(x) for x in mlb_hard.classes_])
+
+
+def get_available_soft_skills():
+    return sorted([str(x) for x in mlb_soft.classes_])
+
+
+def parse_skills(text):
+    if text is None:
+        return []
+
+    return [
+        x.strip().lower()
+        for x in str(text).split(",")
+        if x.strip()
+    ]
+
+
+def clean_text(x):
+    x = str(x).lower().strip()
+    x = re.sub(r"[^0-9a-zA-Zа-яА-ЯёЁ\s\-/]+", " ", x)
+    x = re.sub(r"\s+", " ", x).strip()
+    return x
+
+
+def get_seniority(years):
+    if years <= 0:
+        return "entry"
+    elif years <= 2:
+        return "junior"
+    elif years <= 5:
+        return "middle"
+    return "senior"
+
+
+def experience_id_from_years(years):
+    if years == 0:
+        return "noExperience"
+    elif years <= 3:
+        return "between1And3"
+    elif years <= 6:
+        return "between3And6"
+    return "moreThan6"
+
+
+def safe_mean_from_map(mapping, default=0):
+    try:
+        values = list(mapping.values())
+        if len(values) == 0:
+            return default
+        return float(np.mean(values))
+    except Exception:
+        return default
+
+
+def build_city_profile_dataframe(user_profile):
+    selected_cities = user_profile.get("selected_cities", None)
+
+    if selected_cities is None or len(selected_cities) == 0:
+        cities = get_available_cities()
+    else:
+        cities = selected_cities
+
+    key_skills_list = parse_skills(user_profile.get("key_skills", ""))
+    hard_skills_list = parse_skills(user_profile.get("hard_skills", ""))
+    soft_skills_list = parse_skills(user_profile.get("soft_skills", ""))
+
+    experience_years = int(user_profile.get("experience_years", 0))
+    experience_id = user_profile.get(
+        "experience_id",
+        experience_id_from_years(experience_years)
+    )
+
+    schedule_id = user_profile.get("schedule_id", "unknown")
+    employment_id = user_profile.get("employment_id", "unknown")
+
+    rows = []
+
+    for city in cities:
+        rows.append({
+            "role_name": clean_text(user_profile.get("role_name", "")),
+            "role_area": clean_text(user_profile.get("role_area", "")),
+            "city": city,
+
             "experience_years": experience_years,
             "experience_id": experience_id,
             "schedule_id": schedule_id,
             "employment_id": employment_id,
-            "key_skills": ", ".join(selected_key_skills),
-            "hard_skills": ", ".join(selected_hard_skills),
-            "soft_skills": ", ".join(selected_soft_skills),
-            "selected_cities": final_selected_cities
-        }
 
-        results = predict_all_cities(user_profile)
+            "seniority": get_seniority(experience_years),
+            "job_level": get_seniority(experience_years),
 
-        if results.empty:
-            st.error(T["error_no_predictions"])
-            st.stop()
+            "key_skills_list": key_skills_list,
+            "hard_skills_list": hard_skills_list,
+            "soft_skills_list": soft_skills_list,
 
-        top_city = results.iloc[0]
-        bottom_city = results.iloc[-1]
-        avg_salary = results["predicted_salary"].mean()
-        salary_gap = top_city["predicted_salary"] - bottom_city["predicted_salary"]
+            "hard_skills_count": len(hard_skills_list),
+            "soft_skills_count": len(soft_skills_list),
+            "skills_count": len(set(key_skills_list + hard_skills_list + soft_skills_list)),
+            "hard_soft_ratio": len(hard_skills_list) / max(len(soft_skills_list), 1),
 
+            "is_remote_schedule": int(schedule_id == "remote"),
+            "is_full_day": int(schedule_id == "fullDay"),
+            "is_flexible": int(schedule_id == "flexible"),
+            "is_shift": int(schedule_id == "shift"),
 
-    col1, col2, col3, col4 = st.columns(4)
+            "is_full_employment": int(employment_id == "full"),
+            "is_part_employment": int(employment_id == "part"),
+            "is_project_employment": int(employment_id == "project"),
+        })
 
-    with col1:
-        st.markdown(
-            f"""
-            <div class="metric-card">
-                <div class="metric-title">{T["highest_city"]}</div>
-                <div class="metric-value">{top_city["city"]}</div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+    df = pd.DataFrame(rows)
 
-    with col2:
-        st.markdown(
-            f"""
-            <div class="metric-card">
-                <div class="metric-title">{T["highest_salary"]}</div>
-                <div class="metric-value">{top_city["predicted_salary"]:,.0f} ₽</div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-    with col3:
-        st.markdown(
-            f"""
-            <div class="metric-card">
-                <div class="metric-title">{T["average_salary"]}</div>
-                <div class="metric-value">{avg_salary:,.0f} ₽</div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-    with col4:
-        st.markdown(
-            f"""
-            <div class="metric-card">
-                <div class="metric-title">{T["city_gap"]}</div>
-                <div class="metric-value">{salary_gap:,.0f} ₽</div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-
-    st.markdown(
-        f'<div class="section-title">{T["main_insight"]}</div>',
-        unsafe_allow_html=True
+    df["role_city"] = df["role_name"].astype(str) + "_" + df["city"].astype(str)
+    df["role_exp_interaction"] = (
+        df["role_name"].astype(str) + "_" + df["experience_id"].astype(str)
     )
 
-    st.success(
-        T["insight"].format(
-            top_city=top_city["city"],
-            top_salary=top_city["predicted_salary"],
-            bottom_city=bottom_city["city"],
-            bottom_salary=bottom_city["predicted_salary"]
-        )
+    return df
+
+
+def build_features(df):
+    df = df.copy()
+
+    for col, mapping in freq_maps.items():
+        if col in df.columns:
+            df[col + "_freq"] = df[col].astype(str).map(mapping).fillna(0)
+
+    for col, mapping in target_encoding_maps.items():
+        if col in df.columns:
+            default_value = safe_mean_from_map(mapping)
+            df[col + "_target_oof"] = df[col].astype(str).map(mapping).fillna(default_value)
+
+    anchor_name_map = {
+        "city": "city_avg_salary",
+        "role_name": "role_avg_salary",
+        "role_city": "role_city_avg_salary"
+    }
+
+    for col, mapping in salary_anchor_maps.items():
+        if col in df.columns:
+            default_value = safe_mean_from_map(mapping)
+            output_col = anchor_name_map.get(col, col + "_avg_salary")
+            df[output_col] = df[col].astype(str).map(mapping).fillna(default_value)
+
+    for col in numeric_cols:
+        if col not in df.columns:
+            df[col] = 0
+
+    X_numeric_df = df[numeric_cols].apply(pd.to_numeric, errors="coerce").fillna(0)
+    X_numeric = csr_matrix(scaler.transform(X_numeric_df))
+
+    for col in small_cat_cols:
+        if col not in df.columns:
+            df[col] = "unknown"
+
+    X_small_ohe = pd.get_dummies(df[small_cat_cols])
+    X_small_ohe = X_small_ohe.reindex(
+        columns=small_cat_ohe_columns,
+        fill_value=0
     )
 
+    X_small_ohe_sparse = csr_matrix(X_small_ohe.astype(float).values)
 
-    left, right = st.columns(2)
+    X_key = csr_matrix(mlb_key.transform(df["key_skills_list"]))
+    X_hard = csr_matrix(mlb_hard.transform(df["hard_skills_list"]))
+    X_soft = csr_matrix(mlb_soft.transform(df["soft_skills_list"]))
 
-    with left:
-        st.markdown(
-            f'<div class="section-title">{T["top_cities"]}</div>',
-            unsafe_allow_html=True
-        )
-        st.dataframe(results.head(10), use_container_width=True)
+    X_role_word = tfidf_role_word.transform(df["role_name"])
+    X_role_char = tfidf_role_char.transform(df["role_name"])
 
-    with right:
-        st.markdown(
-            f'<div class="section-title">{T["lowest_cities"]}</div>',
-            unsafe_allow_html=True
-        )
-        st.dataframe(
-            results.tail(10).sort_values("predicted_salary"),
-            use_container_width=True
-        )
+    X_final = hstack([
+        X_numeric,
+        X_small_ohe_sparse,
+        X_key,
+        X_hard,
+        X_soft,
+        X_role_word,
+        X_role_char
+    ]).tocsr()
 
-
-    st.markdown(
-        f'<div class="section-title">{T["salary_comparison"]}</div>',
-        unsafe_allow_html=True
-    )
-
-    fig = px.bar(
-        results,
-        x="city",
-        y="predicted_salary",
-        text="predicted_salary",
-        title=T["chart_title"]
-    )
-
-    fig.update_traces(
-        texttemplate="%{text:,.0f} ₽",
-        textposition="outside"
-    )
-
-    fig.update_layout(
-        xaxis_title=T["xaxis"],
-        yaxis_title=T["yaxis"],
-        height=550,
-        showlegend=False
-    )
-
-    st.plotly_chart(fig, use_container_width=True)
+    return X_final
 
 
-    st.markdown(
-        f'<div class="section-title">{T["full_ranking"]}</div>',
-        unsafe_allow_html=True
-    )
+def predict_all_cities(user_profile):
+    profile_df = build_city_profile_dataframe(user_profile)
+    X_input = build_features(profile_df)
 
-    results_display = results.copy()
-    results_display["predicted_salary"] = (
-        results_display["predicted_salary"].round(0).astype(int)
-    )
+    pred_log = model.predict(X_input)
+    pred_salary = np.expm1(pred_log)
+    pred_salary = np.maximum(pred_salary, 0)
 
-    st.dataframe(results_display, use_container_width=True)
+    results = pd.DataFrame({
+        "city": profile_df["city"],
+        "predicted_salary": pred_salary
+    })
 
-    csv = results_display.to_csv(index=False).encode("utf-8")
+    results = results.sort_values(
+        "predicted_salary",
+        ascending=False
+    ).reset_index(drop=True)
 
-    st.download_button(
-        label=T["download"],
-        data=csv,
-        file_name="salary_predictions_by_city.csv",
-        mime="text/csv"
-    )
-
-
-else:
-    st.markdown(
-        f'<div class="section-title">{T["how_it_works"]}</div>',
-        unsafe_allow_html=True
-    )
-
-    st.write(T["how_text"])
+    return results
