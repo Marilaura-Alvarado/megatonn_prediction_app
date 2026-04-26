@@ -41,7 +41,7 @@ TEXT = {
         "cities": "Cities",
         "all_cities": "All cities",
         "predict": "Generate salary forecast",
-        "info": "Forecast will be generated for {n} city/cities using one fixed profile.",
+        "info": "Forecast will be generated for number of city/cities you chose using one fixed profile.",
         "spinner": "Calculating salary predictions...",
         "error_position": "Please enter or select a position before predicting.",
         "error_skills": "Please select at least one skill before predicting.",
