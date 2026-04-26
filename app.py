@@ -187,8 +187,28 @@ st.markdown(
     }
 
     section[data-testid="stSidebar"] [data-baseweb="tag"] {
-        display: none !important;
-    }
+    background-color: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 999px !important;
+    color: #111827 !important;
+    max-width: 260px !important;
+    overflow: hidden !important;
+    display: flex !important;
+}
+
+section[data-testid="stSidebar"] [data-baseweb="tag"] span,
+section[data-testid="stSidebar"] [data-baseweb="tag"] div {
+    color: #111827 !important;
+    font-weight: 700 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+section[data-testid="stSidebar"] [data-baseweb="tag"] svg {
+    fill: #111827 !important;
+    color: #111827 !important;
+}
 
     section[data-testid="stSidebar"] [data-testid="stCaptionContainer"] {
         color: #dbeafe !important;
