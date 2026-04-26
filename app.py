@@ -52,8 +52,8 @@ TEXT = {
         "main_insight": "Main Insight",
         "insight": "For the same profile, the strongest salary forecast is in {top_city}: {top_salary:,.0f} ₽. The lowest forecast is in {bottom_city}: {bottom_salary:,.0f} ₽.",
         "uncertainty": "The salary range reflects model uncertainty. The predicted salary is the expected value, while the interval shows realistic variation depending on company, seniority interpretation, and market conditions.",
-        "salary_comparison": "Salary Comparison",
-        "chart_title": "Predicted Salary by City",
+        "salary_comparison": "Salary Comparison with Estimated Range",
+        "chart_title": "Predicted Salary by City with Uncertainty Range",
         "full_ranking": "City Ranking",
         "download": "Download results as CSV",
         "how_it_works": "How it works",
@@ -97,8 +97,8 @@ TEXT = {
         "main_insight": "Главный вывод",
         "insight": "Для одного и того же профиля самый высокий прогноз зарплаты в городе {top_city}: {top_salary:,.0f} ₽. Самый низкий прогноз в городе {bottom_city}: {bottom_salary:,.0f} ₽.",
         "uncertainty": "Диапазон зарплаты отражает неопределенность модели. Прогноз зарплаты является ожидаемым значением, а интервал показывает реалистичную вариацию в зависимости от компании, интерпретации уровня опыта и рыночных условий.",
-        "salary_comparison": "Сравнение зарплат",
-        "chart_title": "Прогноз зарплаты по городам",
+        "salary_comparison": "Сравнение зарплат с диапазоном",
+        "chart_title": "Прогноз зарплаты по городам с диапазоном неопределенности",
         "full_ranking": "Рейтинг городов",
         "download": "Скачать результаты в CSV",
         "how_it_works": "Как это работает",
@@ -160,22 +160,41 @@ st.markdown(
         border-radius: 14px !important;
     }
 
-    section[data-testid="stSidebar"] div[data-baseweb="select"] * {
-        color: #111827 !important;
-    }
-
     section[data-testid="stSidebar"] div[data-baseweb="select"] > div {
         background-color: #ffffff !important;
         border-radius: 14px !important;
+        color: #111827 !important;
+    }
+
+    section[data-testid="stSidebar"] div[data-baseweb="select"] span {
+        color: #111827 !important;
+    }
+
+    section[data-testid="stSidebar"] div[data-baseweb="select"] input {
+        color: #111827 !important;
     }
 
     section[data-testid="stSidebar"] [data-baseweb="tag"] {
-        background-color: #e0f2fe !important;
+        background-color: #dbeafe !important;
+        border: 1px solid #93c5fd !important;
         border-radius: 999px !important;
+        color: #0f172a !important;
     }
 
-    section[data-testid="stSidebar"] [data-baseweb="tag"] span {
+    section[data-testid="stSidebar"] [data-baseweb="tag"] span,
+    section[data-testid="stSidebar"] [data-baseweb="tag"] div,
+    section[data-testid="stSidebar"] [data-baseweb="tag"] svg {
         color: #0f172a !important;
+        fill: #0f172a !important;
+    }
+
+    section[data-testid="stSidebar"] div[role="option"] {
+        color: #111827 !important;
+        background-color: #ffffff !important;
+    }
+
+    section[data-testid="stSidebar"] div[role="listbox"] {
+        background-color: #ffffff !important;
     }
 
     .hero {
@@ -471,6 +490,9 @@ if predict_button:
         results["predicted_salary"] = results["predicted_salary"].round(0).astype(int)
         results["salary_min"] = (results["predicted_salary"] * (1 - UNCERTAINTY_RATE)).round(0).astype(int)
         results["salary_max"] = (results["predicted_salary"] * (1 + UNCERTAINTY_RATE)).round(0).astype(int)
+        results["error_plus"] = results["salary_max"] - results["predicted_salary"]
+        results["error_minus"] = results["predicted_salary"] - results["salary_min"]
+
         results = results.sort_values("predicted_salary", ascending=False).reset_index(drop=True)
 
         top_city = results.iloc[0]
@@ -572,18 +594,31 @@ if predict_button:
             [0.35, "#5eead4"],
             [0.65, "#818cf8"],
             [1.00, "#4f46e5"]
-        ]
+        ],
+        error_y="error_plus",
+        error_y_minus="error_minus"
     )
 
     fig.update_traces(
         texttemplate="%{text:,.0f} ₽",
         textposition="outside",
         marker_line_width=0,
-        hovertemplate="<b>%{x}</b><br>%{y:,.0f} ₽<extra></extra>"
+        error_y=dict(
+            thickness=1.6,
+            width=7,
+            color="#334155"
+        ),
+        hovertemplate=(
+            "<b>%{x}</b><br>"
+            "Predicted: %{y:,.0f} ₽<br>"
+            "Estimated range: %{customdata[0]:,.0f} ₽ - %{customdata[1]:,.0f} ₽"
+            "<extra></extra>"
+        ),
+        customdata=results[["salary_min", "salary_max"]]
     )
 
     fig.update_layout(
-        height=580,
+        height=600,
         plot_bgcolor="rgba(255,255,255,0)",
         paper_bgcolor="rgba(255,255,255,0)",
         font=dict(family="Inter", size=14, color="#334155"),
@@ -599,7 +634,7 @@ if predict_button:
 
     st.markdown(f'<div class="section-title">{T["full_ranking"]}</div>', unsafe_allow_html=True)
 
-    results_display = results.copy()
+    results_display = results[["city", "predicted_salary", "salary_min", "salary_max"]].copy()
     results_display.insert(0, "Rank", range(1, len(results_display) + 1))
 
     if LANG == "English":
