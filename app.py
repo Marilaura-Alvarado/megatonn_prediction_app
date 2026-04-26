@@ -41,7 +41,7 @@ TEXT = {
         "cities": "Cities",
         "all_cities": "All cities",
         "predict": "Generate salary forecast",
-        "info": "Forecast will be generated for number of city/cities you chose using one fixed profile.",
+        "info": "Forecast will be generated with the number of city/cities you chose using one fixed profile.",
         "spinner": "Calculating salary predictions...",
         "error_position": "Please enter or select a position before predicting.",
         "error_skills": "Please select at least one skill before predicting.",
@@ -515,7 +515,7 @@ else:
 st.markdown(
     f"""
     <div class="hero">
-        <div class="hero-badge">AI Powered Market Salary Intelligence</div>
+        <div class="hero-badge">Megatonn</div>
         <div class="hero-title">{T["title"]}</div>
         <div class="hero-company">{T["company"]}</div>
         <div class="hero-subtitle">{T["subtitle"]}</div>
