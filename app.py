@@ -451,21 +451,19 @@ selected_key_skills = st.sidebar.multiselect(
     key_skill_options,
     placeholder=T["key_skills"]
 )
-show_selected(T["selected"], selected_key_skills)
 
 selected_hard_skills = st.sidebar.multiselect(
     T["hard_skills"],
     hard_skill_options,
     placeholder=T["hard_skills"]
 )
-show_selected(T["selected"], selected_hard_skills)
 
 selected_soft_skills = st.sidebar.multiselect(
     T["soft_skills"],
     soft_skill_options,
     placeholder=T["soft_skills"]
 )
-show_selected(T["selected"], selected_soft_skills)
+
 
 city_options = [T["all_cities"]] + available_cities
 selected_cities = st.sidebar.multiselect(
@@ -474,7 +472,6 @@ selected_cities = st.sidebar.multiselect(
     default=[T["all_cities"]],
     placeholder=T["cities"]
 )
-show_selected(T["selected"], selected_cities)
 
 predict_button = st.sidebar.button(T["predict"])
 
