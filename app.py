@@ -30,7 +30,7 @@ TEXT = {
     "English": {
         "title": "AI Salary Prediction Platform",
         "company": "for Megatonn",
-        "subtitle": "Compare how the same professional profile is valued across different cities.",
+        "subtitle": "",
         "profile_input": "Profile Input",
         "position": "Position",
         "write_position": "Write position",
@@ -74,8 +74,8 @@ TEXT = {
     },
     "Русский": {
         "title": "AI-платформа прогнозирования зарплат",
-        "company": "для Megatonn",
-        "subtitle": "Сравните, как один и тот же профессиональный профиль оценивается в разных городах.",
+        "company": "для Мегатонн",
+        "subtitle": "",
         "profile_input": "Параметры профиля",
         "position": "Должность",
         "write_position": "Введите должность",
