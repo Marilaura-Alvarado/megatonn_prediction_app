@@ -138,6 +138,16 @@ st.info(
 
 if predict_button:
 
+    # validation
+    if not role_name.strip():
+        st.error("Please enter a position before predicting.")
+        st.stop()
+
+    if not key_skills.strip() and not hard_skills.strip() and not soft_skills.strip():
+        st.error("Please enter at least one skill before predicting.")
+        st.stop()
+
+    # build profile
     user_profile = {
         "role_name": role_name,
         "role_area": role_area,
@@ -276,10 +286,6 @@ else:
 
     st.write(
         """
-        1. Enter one professional profile in the sidebar.
-        2. The system keeps the profile fixed.
-        3. The model automatically changes only the city.
-        4. The platform predicts salary for every city in the dataset.
-        5. Results are shown as rankings, tables, and visual comparisons.
+        Choose the parameters
         """
     )
