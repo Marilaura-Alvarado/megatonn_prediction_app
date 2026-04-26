@@ -13,21 +13,20 @@ from inference import (
 )
 
 st.set_page_config(
-    page_title="AI Salary Prediction Platform",
+    page_title="Megatonn Salary Prediction Platform",
     page_icon="💼",
     layout="wide"
 )
 
-# -------------------------
-# LANGUAGE
-# -------------------------
 LANG = st.sidebar.selectbox("Language / Язык", ["English", "Русский"])
 
 TEXT = {
     "English": {
         "profile_input": "Profile Input",
         "position": "Position",
+        "write_position": "Write position",
         "role_area": "Role area",
+        "write_role_area": "Write role area",
         "experience_years": "Experience years",
         "schedule": "Schedule",
         "employment_type": "Employment type",
@@ -37,207 +36,578 @@ TEXT = {
         "cities": "Cities",
         "all_cities": "All cities",
         "predict": "Generate salary forecast",
-        "info": "Predictions will be generated for {n} cities using the same profile.",
-        "error_position": "Enter a position",
-        "error_skills": "Select at least one skill",
+        "info": "Forecast will be generated for {n} city/cities using one fixed profile.",
+        "spinner": "Calculating salary predictions...",
+        "error_position": "Please enter or select a position before predicting.",
+        "error_skills": "Please select at least one skill before predicting.",
         "highest_city": "Best city",
-        "highest_salary": "Top salary",
-        "average_salary": "Average",
-        "city_gap": "Gap",
+        "highest_salary": "Highest salary",
+        "average_salary": "Average salary",
+        "city_gap": "Salary gap",
+        "main_insight": "Main Insight",
+        "insight": "For the same profile, the strongest salary forecast is in {top_city}: {top_salary:,.0f} ₽. The lowest forecast is in {bottom_city}: {bottom_salary:,.0f} ₽.",
+        "uncertainty": "The salary range reflects model uncertainty. The predicted salary is the expected value, while the interval shows realistic variation depending on company, seniority interpretation, and market conditions.",
+        "salary_comparison": "Salary Comparison with Estimated Range",
+        "chart_title": "Predicted Salary by City with Uncertainty Range",
+        "full_ranking": "City Ranking",
+        "download": "Download results as CSV",
+        "how_it_works": "How it works",
+        "how_text": "Select a position, skills, employment conditions and cities. The model keeps the profile fixed and changes only the city.",
+        "other": "Other",
+        "on_site": "On-site",
+        "remote": "Remote",
+        "hybrid": "Hybrid",
+        "shift": "Shift",
+        "full_time": "Full time",
+        "part_time": "Part time",
+        "project_contract": "Project contract",
         "range": "Range"
     },
     "Русский": {
-        "profile_input": "Параметры",
+        "profile_input": "Параметры профиля",
         "position": "Должность",
-        "role_area": "Область",
-        "experience_years": "Опыт",
-        "schedule": "График",
-        "employment_type": "Занятость",
+        "write_position": "Введите должность",
+        "role_area": "Профессиональная область",
+        "write_role_area": "Введите профессиональную область",
+        "experience_years": "Опыт работы, лет",
+        "schedule": "Формат работы",
+        "employment_type": "Тип занятости",
         "key_skills": "Ключевые навыки",
-        "hard_skills": "Hard навыки",
-        "soft_skills": "Soft навыки",
+        "hard_skills": "Профессиональные навыки",
+        "soft_skills": "Гибкие навыки",
         "cities": "Города",
         "all_cities": "Все города",
-        "predict": "Сделать прогноз",
-        "info": "Прогноз для {n} городов",
-        "error_position": "Введите должность",
-        "error_skills": "Выберите навыки",
+        "predict": "Сформировать прогноз",
+        "info": "Прогноз будет рассчитан для {n} городов с использованием одного фиксированного профиля.",
+        "spinner": "Расчет прогнозов зарплаты...",
+        "error_position": "Пожалуйста, выберите или введите должность перед расчетом.",
+        "error_skills": "Пожалуйста, выберите хотя бы один навык перед расчетом.",
         "highest_city": "Лучший город",
-        "highest_salary": "Макс зарплата",
-        "average_salary": "Средняя",
-        "city_gap": "Разница",
+        "highest_salary": "Максимальная зарплата",
+        "average_salary": "Средняя зарплата",
+        "city_gap": "Разница зарплат",
+        "main_insight": "Главный вывод",
+        "insight": "Для одного и того же профиля самый высокий прогноз зарплаты в городе {top_city}: {top_salary:,.0f} ₽. Самый низкий прогноз в городе {bottom_city}: {bottom_salary:,.0f} ₽.",
+        "uncertainty": "Диапазон зарплаты отражает неопределенность модели. Прогноз зарплаты является ожидаемым значением, а интервал показывает реалистичную вариацию в зависимости от компании, интерпретации уровня опыта и рыночных условий.",
+        "salary_comparison": "Сравнение зарплат с диапазоном",
+        "chart_title": "Прогноз зарплаты по городам с диапазоном неопределенности",
+        "full_ranking": "Рейтинг городов",
+        "download": "Скачать результаты в CSV",
+        "how_it_works": "Как это работает",
+        "how_text": "Выберите должность, навыки, условия занятости и города. Модель фиксирует профиль и меняет только город.",
+        "other": "Другое",
+        "on_site": "Офис",
+        "remote": "Удаленно",
+        "hybrid": "Гибрид",
+        "shift": "Сменный график",
+        "full_time": "Полная занятость",
+        "part_time": "Частичная занятость",
+        "project_contract": "Проектный контракт",
         "range": "Диапазон"
     }
 }
 
 T = TEXT[LANG]
 
-# -------------------------
-# STYLE (GLASSMORPHISM)
-# -------------------------
-st.markdown("""
-<style>
+st.markdown(
+    """
+    <style>
+    .stApp {
+        background:
+            radial-gradient(circle at top left, rgba(99,102,241,0.18), transparent 32%),
+            radial-gradient(circle at top right, rgba(20,184,166,0.14), transparent 30%),
+            linear-gradient(135deg, #f8fafc 0%, #eef2ff 45%, #f8fafc 100%);
+    }
 
-.stApp {
-    background: linear-gradient(135deg, #0f172a, #1e293b);
+    .block-container {
+        padding-top: 2rem;
+        padding-bottom: 4rem;
+        max-width: 1480px;
+    }
+
+    section[data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #111827 0%, #172033 55%, #0f172a 100%);
+        width: 360px !important;
+        min-width: 360px !important;
+    }
+
+    section[data-testid="stSidebar"] > div {
+        width: 360px !important;
+        min-width: 360px !important;
+    }
+
+    section[data-testid="stSidebar"] label,
+    section[data-testid="stSidebar"] h1,
+    section[data-testid="stSidebar"] h2,
+    section[data-testid="stSidebar"] h3 {
+        color: #f8fafc !important;
+    }
+
+    section[data-testid="stSidebar"] input,
+    section[data-testid="stSidebar"] textarea {
+        color: #111827 !important;
+        background-color: #ffffff !important;
+        border-radius: 14px !important;
+    }
+
+    section[data-testid="stSidebar"] div[data-baseweb="select"],
+    section[data-testid="stSidebar"] div[data-baseweb="select"] * {
+        overflow: visible !important;
+    }
+
+    section[data-testid="stSidebar"] div[data-baseweb="select"] > div {
+        background-color: #ffffff !important;
+        border-radius: 14px !important;
+        color: #111827 !important;
+        min-height: 46px !important;
+        padding-left: 18px !important;
+        padding-right: 12px !important;
+    }
+
+    section[data-testid="stSidebar"] div[data-baseweb="select"] span,
+    section[data-testid="stSidebar"] div[data-baseweb="select"] input {
+        color: #111827 !important;
+        font-weight: 650 !important;
+    }
+
+    section[data-testid="stSidebar"] [data-baseweb="tag"] {
+        background-color: #e0f2fe !important;
+        border: 1px solid #60a5fa !important;
+        border-radius: 999px !important;
+        color: #0f172a !important;
+        margin-left: 12px !important;
+        padding-left: 14px !important;
+        padding-right: 8px !important;
+        max-width: 245px !important;
+        min-width: fit-content !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        transform: translateX(8px) !important;
+    }
+
+    section[data-testid="stSidebar"] [data-baseweb="tag"] span,
+    section[data-testid="stSidebar"] [data-baseweb="tag"] div {
+        color: #0f172a !important;
+        font-weight: 800 !important;
+        white-space: nowrap !important;
+        overflow: visible !important;
+        text-overflow: clip !important;
+    }
+
+    section[data-testid="stSidebar"] [data-baseweb="tag"] svg {
+        fill: #0f172a !important;
+        color: #0f172a !important;
+        margin-left: 6px !important;
+    }
+
+    div[role="listbox"],
+    div[role="option"] {
+        background-color: #ffffff !important;
+        color: #111827 !important;
+    }
+
+    div[role="option"] span {
+        color: #111827 !important;
+    }
+
+    .info-card {
+        background: rgba(255,255,255,0.78);
+        border: 1px solid rgba(148, 163, 184, 0.28);
+        border-radius: 22px;
+        padding: 19px 23px;
+        color: #334155;
+        font-weight: 650;
+        box-shadow: 0px 14px 34px rgba(15, 23, 42, 0.07);
+        margin-bottom: 24px;
+    }
+
+    .metric-card {
+        background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255,255,255,0.88));
+        border: 1px solid rgba(226,232,240,0.95);
+        padding: 25px 24px;
+        border-radius: 26px;
+        box-shadow: 0px 18px 42px rgba(15,23,42,0.08);
+        min-height: 142px;
+    }
+
+    .metric-title {
+        font-size: 12px;
+        color: #64748b;
+        margin-bottom: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.65px;
+    }
+
+    .metric-value {
+        font-size: 29px;
+        font-weight: 900;
+        color: #111827;
+        line-height: 1.14;
+    }
+
+    .metric-sub {
+        font-size: 13px;
+        color: #64748b;
+        margin-top: 8px;
+        font-weight: 700;
+    }
+
+    .section-title {
+        font-size: 29px;
+        font-weight: 900;
+        color: #111827;
+        margin-top: 36px;
+        margin-bottom: 15px;
+        letter-spacing: -0.55px;
+    }
+
+    .insight-card {
+        padding: 23px 25px;
+        background: linear-gradient(135deg, rgba(236,253,245,0.95) 0%, rgba(238,242,255,0.95) 100%);
+        border: 1px solid rgba(20,184,166,0.24);
+        border-radius: 24px;
+        color: #064e3b;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 1.65;
+        box-shadow: 0px 16px 38px rgba(15,23,42,0.07);
+    }
+
+    .note-card {
+        margin-top: 12px;
+        padding: 17px 20px;
+        background: rgba(255,255,255,0.72);
+        border: 1px solid rgba(148,163,184,0.25);
+        border-radius: 20px;
+        color: #475569;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1.6;
+    }
+
+    .table-card {
+        background: rgba(255,255,255,0.85);
+        padding: 18px;
+        border-radius: 26px;
+        border: 1px solid rgba(226,232,240,0.95);
+        box-shadow: 0px 18px 40px rgba(15,23,42,0.07);
+    }
+
+    .stButton>button {
+        width: 100%;
+        border-radius: 18px;
+        height: 54px;
+        font-weight: 850;
+        background: linear-gradient(135deg, #4f46e5 0%, #0f766e 100%);
+        color: white;
+        border: none;
+        box-shadow: 0px 14px 28px rgba(79,70,229,0.32);
+    }
+
+    .stButton>button:hover {
+        background: linear-gradient(135deg, #4338ca 0%, #0d9488 100%);
+        color: white;
+    }
+
+    div[data-testid="stDataFrame"] {
+        border-radius: 18px;
+        overflow: hidden;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+available_cities = get_available_cities()
+available_positions = get_available_positions()
+available_role_areas = get_available_role_areas()
+
+key_skill_options = get_available_key_skills()
+hard_skill_options = get_available_hard_skills()
+soft_skill_options = get_available_soft_skills()
+
+schedule_label_to_value = {
+    T["on_site"]: "fullDay",
+    T["remote"]: "remote",
+    T["hybrid"]: "flexible",
+    T["shift"]: "shift"
 }
 
-/* HEADER */
-.top-header {
-    padding: 25px;
-    border-radius: 20px;
-    backdrop-filter: blur(14px);
-    background: rgba(255,255,255,0.08);
-    margin-bottom: 20px;
+employment_label_to_value = {
+    T["full_time"]: "full",
+    T["part_time"]: "part",
+    T["project_contract"]: "project"
 }
 
-.top-title {
-    font-size: 34px;
-    font-weight: 900;
-    color: white;
-}
-
-.top-sub {
-    font-size: 16px;
-    color: #cbd5f5;
-}
-
-/* SIDEBAR */
-section[data-testid="stSidebar"] {
-    background: #020617;
-}
-
-/* FIX TAGS */
-[data-baseweb="tag"] {
-    background: #38bdf8 !important;
-    color: black !important;
-    border-radius: 20px !important;
-    padding: 4px 10px !important;
-}
-
-/* CARDS */
-.metric-card {
-    padding: 20px;
-    border-radius: 18px;
-    background: rgba(255,255,255,0.08);
-    backdrop-filter: blur(12px);
-    color: white;
-}
-
-</style>
-""", unsafe_allow_html=True)
-
-# -------------------------
-# HEADER
-# -------------------------
-st.markdown("""
-<div class="top-header">
-    <div class="top-title">AI Salary Prediction Platform</div>
-    <div class="top-sub">by Megatonn</div>
-</div>
-""", unsafe_allow_html=True)
-
-# -------------------------
-# LOAD DATA
-# -------------------------
-cities = get_available_cities()
-positions = get_available_positions()
-areas = get_available_role_areas()
-
-key_sk = get_available_key_skills()
-hard_sk = get_available_hard_skills()
-soft_sk = get_available_soft_skills()
-
-# -------------------------
-# SIDEBAR INPUTS
-# -------------------------
 st.sidebar.header(T["profile_input"])
 
-role_name = st.sidebar.selectbox(T["position"], positions)
-role_area = st.sidebar.selectbox(T["role_area"], areas)
+position_options = available_positions + [T["other"]]
+selected_position = st.sidebar.selectbox(T["position"], position_options)
 
-years = st.sidebar.slider(T["experience_years"], 0, 15, 2)
-exp_id = experience_id_from_years(years)
+if selected_position == T["other"]:
+    role_name = st.sidebar.text_input(T["write_position"], "")
+else:
+    role_name = selected_position
 
-schedule = st.sidebar.selectbox(T["schedule"], ["fullDay", "remote", "flexible", "shift"])
-employment = st.sidebar.selectbox(T["employment_type"], ["full", "part", "project"])
+role_area_options = available_role_areas + [T["other"]]
+selected_role_area = st.sidebar.selectbox(T["role_area"], role_area_options)
 
-k = st.sidebar.multiselect(T["key_skills"], key_sk)
-h = st.sidebar.multiselect(T["hard_skills"], hard_sk)
-s = st.sidebar.multiselect(T["soft_skills"], soft_sk)
+if selected_role_area == T["other"]:
+    role_area = st.sidebar.text_input(T["write_role_area"], "")
+else:
+    role_area = selected_role_area
 
+experience_years = st.sidebar.slider(T["experience_years"], 0, 15, 2)
+experience_id = experience_id_from_years(experience_years)
+
+selected_schedule_label = st.sidebar.selectbox(T["schedule"], list(schedule_label_to_value.keys()))
+schedule_id = schedule_label_to_value[selected_schedule_label]
+
+selected_employment_label = st.sidebar.selectbox(T["employment_type"], list(employment_label_to_value.keys()))
+employment_id = employment_label_to_value[selected_employment_label]
+
+selected_key_skills = st.sidebar.multiselect(T["key_skills"], key_skill_options)
+selected_hard_skills = st.sidebar.multiselect(T["hard_skills"], hard_skill_options)
+selected_soft_skills = st.sidebar.multiselect(T["soft_skills"], soft_skill_options)
+
+city_options = [T["all_cities"]] + available_cities
 selected_cities = st.sidebar.multiselect(
     T["cities"],
-    [T["all_cities"]] + cities,
+    city_options,
     default=[T["all_cities"]]
 )
 
-if T["all_cities"] in selected_cities:
-    selected_cities = cities
+predict_button = st.sidebar.button(T["predict"])
 
-predict = st.sidebar.button(T["predict"])
+if T["all_cities"] in selected_cities or len(selected_cities) == 0:
+    final_selected_cities = available_cities
+else:
+    final_selected_cities = selected_cities
 
-# -------------------------
-# INFO
-# -------------------------
-st.info(T["info"].format(n=len(selected_cities)))
+st.markdown(
+    f"""
+    <div class="info-card">
+        {T["info"].format(n=len(final_selected_cities))}
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
-# -------------------------
-# PREDICTION
-# -------------------------
-if predict:
+if predict_button:
 
-    if not role_name:
-        st.error(T["error_position"])
-        st.stop()
+    with st.spinner(T["spinner"]):
 
-    if not k and not h and not s:
-        st.error(T["error_skills"])
-        st.stop()
+        if not str(role_name).strip():
+            st.error(T["error_position"])
+            st.stop()
 
-    profile = {
-        "role_name": role_name,
-        "role_area": role_area,
-        "experience_years": years,
-        "experience_id": exp_id,
-        "schedule_id": schedule,
-        "employment_id": employment,
-        "key_skills": ", ".join(k),
-        "hard_skills": ", ".join(h),
-        "soft_skills": ", ".join(s),
-        "selected_cities": selected_cities
-    }
+        if not selected_key_skills and not selected_hard_skills and not selected_soft_skills:
+            st.error(T["error_skills"])
+            st.stop()
 
-    df = predict_all_cities(profile)
+        user_profile = {
+            "role_name": role_name,
+            "role_area": role_area,
+            "experience_years": experience_years,
+            "experience_id": experience_id,
+            "schedule_id": schedule_id,
+            "employment_id": employment_id,
+            "key_skills": ", ".join(selected_key_skills),
+            "hard_skills": ", ".join(selected_hard_skills),
+            "soft_skills": ", ".join(selected_soft_skills),
+            "selected_cities": final_selected_cities
+        }
 
-    df["predicted_salary"] = df["predicted_salary"].astype(int)
+        results = predict_all_cities(user_profile)
 
-    # RANGE
-    df["min"] = (df["predicted_salary"] * 0.85).astype(int)
-    df["max"] = (df["predicted_salary"] * 1.15).astype(int)
+        if results.empty:
+            st.error("No predictions available.")
+            st.stop()
 
-    # METRICS
-    top = df.iloc[0]
-    bottom = df.iloc[-1]
+        uncertainty_rate = 0.15
 
-    c1, c2, c3, c4 = st.columns(4)
+        results["predicted_salary"] = results["predicted_salary"].round(0).astype(int)
+        results["salary_min"] = (results["predicted_salary"] * (1 - uncertainty_rate)).round(0).astype(int)
+        results["salary_max"] = (results["predicted_salary"] * (1 + uncertainty_rate)).round(0).astype(int)
+        results["error_plus"] = results["salary_max"] - results["predicted_salary"]
+        results["error_minus"] = results["predicted_salary"] - results["salary_min"]
 
-    c1.markdown(f'<div class="metric-card">{top["city"]}</div>', unsafe_allow_html=True)
-    c2.markdown(f'<div class="metric-card">{top["predicted_salary"]}</div>', unsafe_allow_html=True)
-    c3.markdown(f'<div class="metric-card">{df["predicted_salary"].mean():.0f}</div>', unsafe_allow_html=True)
-    c4.markdown(f'<div class="metric-card">{top["predicted_salary"] - bottom["predicted_salary"]}</div>', unsafe_allow_html=True)
+        results = results.sort_values("predicted_salary", ascending=False).reset_index(drop=True)
 
-    # CHART
+        top_city = results.iloc[0]
+        bottom_city = results.iloc[-1]
+        avg_salary = int(results["predicted_salary"].mean().round(0))
+        salary_gap = int(top_city["predicted_salary"] - bottom_city["predicted_salary"])
+
+    col1, col2, col3, col4 = st.columns(4)
+
+    with col1:
+        st.markdown(
+            f"""
+            <div class="metric-card">
+                <div class="metric-title">{T["highest_city"]}</div>
+                <div class="metric-value">{top_city["city"]}</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    with col2:
+        st.markdown(
+            f"""
+            <div class="metric-card">
+                <div class="metric-title">{T["highest_salary"]}</div>
+                <div class="metric-value">{top_city["predicted_salary"]:,.0f} ₽</div>
+                <div class="metric-sub">
+                    {T["range"]}: {top_city["salary_min"]:,.0f} ₽ to {top_city["salary_max"]:,.0f} ₽
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    with col3:
+        avg_min = int(avg_salary * 0.85)
+        avg_max = int(avg_salary * 1.15)
+
+        st.markdown(
+            f"""
+            <div class="metric-card">
+                <div class="metric-title">{T["average_salary"]}</div>
+                <div class="metric-value">{avg_salary:,.0f} ₽</div>
+                <div class="metric-sub">
+                    {T["range"]}: {avg_min:,.0f} ₽ to {avg_max:,.0f} ₽
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    with col4:
+        st.markdown(
+            f"""
+            <div class="metric-card">
+                <div class="metric-title">{T["city_gap"]}</div>
+                <div class="metric-value">{salary_gap:,.0f} ₽</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    st.markdown(f'<div class="section-title">{T["main_insight"]}</div>', unsafe_allow_html=True)
+
+    st.markdown(
+        f"""
+        <div class="insight-card">
+            {T["insight"].format(
+                top_city=top_city["city"],
+                top_salary=top_city["predicted_salary"],
+                bottom_city=bottom_city["city"],
+                bottom_salary=bottom_city["predicted_salary"]
+            )}
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown(
+        f"""
+        <div class="note-card">
+            {T["uncertainty"]}
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown(f'<div class="section-title">{T["salary_comparison"]}</div>', unsafe_allow_html=True)
+
     fig = px.bar(
-        df,
+        results,
         x="city",
         y="predicted_salary",
-        error_y=df["max"] - df["predicted_salary"],
-        error_y_minus=df["predicted_salary"] - df["min"],
-        color="predicted_salary"
+        text="predicted_salary",
+        title=T["chart_title"],
+        color="predicted_salary",
+        color_continuous_scale=[
+            [0.00, "#99f6e4"],
+            [0.35, "#5eead4"],
+            [0.65, "#818cf8"],
+            [1.00, "#4f46e5"]
+        ],
+        error_y="error_plus",
+        error_y_minus="error_minus"
+    )
+
+    fig.update_traces(
+        texttemplate="%{text:,.0f} ₽",
+        textposition="outside",
+        marker_line_width=0,
+        error_y=dict(thickness=1.6, width=7, color="#334155"),
+        hovertemplate=(
+            "<b>%{x}</b><br>"
+            "Predicted: %{y:,.0f} ₽<br>"
+            "Estimated range: %{customdata[0]:,.0f} ₽ to %{customdata[1]:,.0f} ₽"
+            "<extra></extra>"
+        ),
+        customdata=results[["salary_min", "salary_max"]]
+    )
+
+    fig.update_layout(
+        height=600,
+        plot_bgcolor="rgba(255,255,255,0)",
+        paper_bgcolor="rgba(255,255,255,0)",
+        font=dict(size=14, color="#334155"),
+        title=dict(font=dict(size=22, color="#111827")),
+        xaxis=dict(title="", tickangle=-25, gridcolor="rgba(148,163,184,0.13)"),
+        yaxis=dict(title="Predicted Salary, RUB", gridcolor="rgba(148,163,184,0.25)"),
+        coloraxis_showscale=False,
+        margin=dict(l=30, r=30, t=75, b=95),
+        bargap=0.28
     )
 
     st.plotly_chart(fig, use_container_width=True)
 
-    # TABLE
-    st.dataframe(df)
+    st.markdown(f'<div class="section-title">{T["full_ranking"]}</div>', unsafe_allow_html=True)
+
+    results_display = results[["city", "predicted_salary", "salary_min", "salary_max"]].copy()
+    results_display.insert(0, "Rank", range(1, len(results_display) + 1))
+
+    if LANG == "English":
+        results_display = results_display.rename(columns={
+            "city": "City",
+            "predicted_salary": "Predicted Salary, RUB",
+            "salary_min": "Estimated Min, RUB",
+            "salary_max": "Estimated Max, RUB"
+        })
+    else:
+        results_display = results_display.rename(columns={
+            "city": "Город",
+            "predicted_salary": "Прогноз зарплаты, руб.",
+            "salary_min": "Минимальная оценка, руб.",
+            "salary_max": "Максимальная оценка, руб."
+        })
+
+    st.markdown('<div class="table-card">', unsafe_allow_html=True)
+    st.dataframe(results_display, use_container_width=True, hide_index=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    csv = results_display.to_csv(index=False).encode("utf-8")
+
+    st.download_button(
+        label=T["download"],
+        data=csv,
+        file_name="salary_predictions_by_city.csv",
+        mime="text/csv"
+    )
+
+else:
+    st.markdown(f'<div class="section-title">{T["how_it_works"]}</div>', unsafe_allow_html=True)
+    st.markdown(
+        f"""
+        <div class="insight-card">
+            {T["how_text"]}
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
