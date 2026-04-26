@@ -123,29 +123,38 @@ T = TEXT[LANG]
 
 
 # =========================
-# CSS
+# STYLE
 # =========================
 
 st.markdown(
     """
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
     html, body, [class*="css"] {
         font-family: 'Inter', sans-serif;
     }
 
     .stApp {
-        background: linear-gradient(135deg, #f8fafc 0%, #eef4ff 45%, #f8fafc 100%);
+        background:
+            radial-gradient(circle at top left, rgba(99,102,241,0.18), transparent 32%),
+            radial-gradient(circle at top right, rgba(20,184,166,0.14), transparent 30%),
+            linear-gradient(135deg, #f8fafc 0%, #eef2ff 45%, #f8fafc 100%);
+    }
+
+    .block-container {
+        padding-top: 2rem;
+        padding-bottom: 4rem;
+        max-width: 1480px;
     }
 
     section[data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #0f172a 0%, #111827 100%);
+        background: linear-gradient(180deg, #111827 0%, #172033 55%, #0f172a 100%);
         border-right: 1px solid rgba(255,255,255,0.08);
     }
 
     section[data-testid="stSidebar"] * {
-        color: #f9fafb;
+        color: #f8fafc;
     }
 
     section[data-testid="stSidebar"] input,
@@ -155,126 +164,145 @@ st.markdown(
     }
 
     .hero {
-        padding: 34px 36px;
-        border-radius: 28px;
-        background: linear-gradient(135deg, #111827 0%, #1e3a8a 55%, #2563eb 100%);
+        position: relative;
+        overflow: hidden;
+        padding: 42px 44px;
+        border-radius: 34px;
+        background:
+            radial-gradient(circle at 18% 20%, rgba(255,255,255,0.25), transparent 22%),
+            linear-gradient(135deg, #0f172a 0%, #312e81 42%, #0f766e 100%);
         color: white;
-        box-shadow: 0px 22px 50px rgba(37, 99, 235, 0.24);
+        box-shadow: 0px 28px 70px rgba(30, 41, 59, 0.26);
         margin-bottom: 28px;
+    }
+
+    .hero:after {
+        content: "";
+        position: absolute;
+        right: -80px;
+        top: -80px;
+        width: 260px;
+        height: 260px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.12);
     }
 
     .hero-badge {
         display: inline-block;
-        padding: 8px 14px;
+        padding: 9px 16px;
         border-radius: 999px;
         background: rgba(255,255,255,0.14);
-        border: 1px solid rgba(255,255,255,0.20);
+        border: 1px solid rgba(255,255,255,0.22);
         font-size: 13px;
-        font-weight: 600;
-        margin-bottom: 16px;
+        font-weight: 700;
+        margin-bottom: 18px;
+        letter-spacing: 0.3px;
     }
 
     .hero-title {
-        font-size: 46px;
-        font-weight: 850;
-        letter-spacing: -1.2px;
-        margin-bottom: 4px;
-        line-height: 1.05;
+        font-size: 50px;
+        font-weight: 900;
+        letter-spacing: -1.4px;
+        margin-bottom: 6px;
+        line-height: 1.04;
     }
 
     .hero-company {
-        font-size: 24px;
-        font-weight: 700;
-        opacity: 0.92;
-        margin-bottom: 14px;
+        font-size: 25px;
+        font-weight: 750;
+        color: rgba(255,255,255,0.88);
+        margin-bottom: 16px;
     }
 
     .hero-subtitle {
         font-size: 18px;
-        max-width: 820px;
-        color: rgba(255,255,255,0.86);
-        line-height: 1.6;
+        max-width: 850px;
+        color: rgba(255,255,255,0.84);
+        line-height: 1.65;
     }
 
     .info-card {
-        background: rgba(255,255,255,0.82);
-        backdrop-filter: blur(14px);
+        background: rgba(255,255,255,0.78);
+        backdrop-filter: blur(16px);
         border: 1px solid rgba(148, 163, 184, 0.28);
-        border-radius: 20px;
-        padding: 18px 22px;
-        color: #1e3a8a;
-        font-weight: 600;
-        box-shadow: 0px 12px 30px rgba(15, 23, 42, 0.06);
+        border-radius: 22px;
+        padding: 19px 23px;
+        color: #334155;
+        font-weight: 650;
+        box-shadow: 0px 14px 34px rgba(15, 23, 42, 0.07);
         margin-bottom: 24px;
     }
 
     .metric-card {
-        background: rgba(255,255,255,0.92);
-        border: 1px solid rgba(226,232,240,0.9);
-        padding: 24px 22px;
-        border-radius: 24px;
-        box-shadow: 0px 18px 36px rgba(15,23,42,0.08);
+        background:
+            linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255,255,255,0.88));
+        border: 1px solid rgba(226,232,240,0.95);
+        padding: 25px 24px;
+        border-radius: 26px;
+        box-shadow: 0px 18px 42px rgba(15,23,42,0.08);
         text-align: left;
-        min-height: 126px;
+        min-height: 132px;
     }
 
     .metric-title {
-        font-size: 13px;
+        font-size: 12px;
         color: #64748b;
-        margin-bottom: 10px;
-        font-weight: 700;
+        margin-bottom: 12px;
+        font-weight: 800;
         text-transform: uppercase;
-        letter-spacing: 0.4px;
+        letter-spacing: 0.65px;
     }
 
     .metric-value {
-        font-size: 28px;
-        font-weight: 850;
-        color: #0f172a;
-        line-height: 1.15;
+        font-size: 29px;
+        font-weight: 900;
+        color: #111827;
+        line-height: 1.14;
     }
 
     .section-title {
-        font-size: 27px;
-        font-weight: 850;
-        color: #0f172a;
-        margin-top: 34px;
-        margin-bottom: 14px;
-        letter-spacing: -0.4px;
+        font-size: 29px;
+        font-weight: 900;
+        color: #111827;
+        margin-top: 36px;
+        margin-bottom: 15px;
+        letter-spacing: -0.55px;
     }
 
     .insight-card {
-        padding: 22px 24px;
-        background: linear-gradient(135deg, #ecfdf5 0%, #dbeafe 100%);
-        border: 1px solid rgba(34,197,94,0.22);
-        border-radius: 22px;
+        padding: 23px 25px;
+        background:
+            linear-gradient(135deg, rgba(236,253,245,0.95) 0%, rgba(238,242,255,0.95) 100%);
+        border: 1px solid rgba(20,184,166,0.24);
+        border-radius: 24px;
         color: #064e3b;
         font-size: 16px;
-        font-weight: 600;
-        box-shadow: 0px 14px 32px rgba(15,23,42,0.06);
+        font-weight: 700;
+        line-height: 1.65;
+        box-shadow: 0px 16px 38px rgba(15,23,42,0.07);
     }
 
     .table-card {
-        background: rgba(255,255,255,0.88);
+        background: rgba(255,255,255,0.85);
         padding: 18px;
-        border-radius: 24px;
-        border: 1px solid rgba(226,232,240,0.9);
-        box-shadow: 0px 16px 34px rgba(15,23,42,0.06);
+        border-radius: 26px;
+        border: 1px solid rgba(226,232,240,0.95);
+        box-shadow: 0px 18px 40px rgba(15,23,42,0.07);
     }
 
     .stButton>button {
         width: 100%;
-        border-radius: 16px;
-        height: 52px;
-        font-weight: 800;
-        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        border-radius: 18px;
+        height: 54px;
+        font-weight: 850;
+        background: linear-gradient(135deg, #4f46e5 0%, #0f766e 100%);
         color: white;
         border: none;
-        box-shadow: 0px 12px 24px rgba(37,99,235,0.32);
+        box-shadow: 0px 14px 28px rgba(79,70,229,0.32);
     }
 
     .stButton>button:hover {
-        background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+        background: linear-gradient(135deg, #4338ca 0%, #0d9488 100%);
         color: white;
         transform: translateY(-1px);
     }
@@ -283,12 +311,6 @@ st.markdown(
         border-radius: 18px;
         overflow: hidden;
     }
-
-    .block-container {
-        padding-top: 2rem;
-        padding-bottom: 3rem;
-        max-width: 1450px;
-    }
     </style>
     """,
     unsafe_allow_html=True
@@ -296,7 +318,7 @@ st.markdown(
 
 
 # =========================
-# DATA OPTIONS
+# OPTIONS
 # =========================
 
 available_cities = get_available_cities()
@@ -357,12 +379,7 @@ selected_hard_skills = st.sidebar.multiselect(T["hard_skills"], hard_skill_optio
 selected_soft_skills = st.sidebar.multiselect(T["soft_skills"], soft_skill_options)
 
 city_options = [T["all_cities"]] + available_cities
-
-selected_cities = st.sidebar.multiselect(
-    T["cities"],
-    city_options,
-    default=[T["all_cities"]]
-)
+selected_cities = st.sidebar.multiselect(T["cities"], city_options, default=[T["all_cities"]])
 
 predict_button = st.sidebar.button(T["predict"])
 
@@ -379,7 +396,7 @@ else:
 st.markdown(
     f"""
     <div class="hero">
-        <div class="hero-badge">Machine Learning Salary Intelligence</div>
+        <div class="hero-badge">AI Powered Market Salary Intelligence</div>
         <div class="hero-title">{T["title"]}</div>
         <div class="hero-company">{T["company"]}</div>
         <div class="hero-subtitle">{T["subtitle"]}</div>
@@ -399,7 +416,7 @@ st.markdown(
 
 
 # =========================
-# MAIN
+# APP LOGIC
 # =========================
 
 if predict_button:
@@ -509,7 +526,12 @@ if predict_button:
         text="predicted_salary",
         title=T["chart_title"],
         color="predicted_salary",
-        color_continuous_scale="Blues"
+        color_continuous_scale=[
+            [0.00, "#99f6e4"],
+            [0.35, "#5eead4"],
+            [0.65, "#818cf8"],
+            [1.00, "#4f46e5"]
+        ]
     )
 
     fig.update_traces(
@@ -520,15 +542,16 @@ if predict_button:
     )
 
     fig.update_layout(
-        height=560,
-        plot_bgcolor="rgba(0,0,0,0)",
-        paper_bgcolor="rgba(0,0,0,0)",
+        height=580,
+        plot_bgcolor="rgba(255,255,255,0)",
+        paper_bgcolor="rgba(255,255,255,0)",
         font=dict(family="Inter", size=14, color="#334155"),
-        title=dict(font=dict(size=20, color="#0f172a")),
-        xaxis=dict(title="", tickangle=-25, gridcolor="rgba(148,163,184,0.15)"),
+        title=dict(font=dict(size=22, color="#111827")),
+        xaxis=dict(title="", tickangle=-25, gridcolor="rgba(148,163,184,0.13)"),
         yaxis=dict(title="Predicted Salary, RUB", gridcolor="rgba(148,163,184,0.25)"),
         coloraxis_showscale=False,
-        margin=dict(l=30, r=30, t=70, b=90)
+        margin=dict(l=30, r=30, t=75, b=95),
+        bargap=0.28
     )
 
     st.plotly_chart(fig, use_container_width=True)
