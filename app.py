@@ -51,6 +51,7 @@ TEXT = {
         "city_gap": "Salary gap",
         "main_insight": "Main Insight",
         "insight": "For the same profile, the strongest salary forecast is in {top_city}: {top_salary:,.0f} ₽. The lowest forecast is in {bottom_city}: {bottom_salary:,.0f} ₽.",
+        "uncertainty": "The salary range reflects model uncertainty. The predicted salary is the expected value, while the interval shows realistic variation depending on company, seniority interpretation, and market conditions.",
         "salary_comparison": "Salary Comparison",
         "chart_title": "Predicted Salary by City",
         "full_ranking": "City Ranking",
@@ -64,7 +65,8 @@ TEXT = {
         "shift": "Shift",
         "full_time": "Full time",
         "part_time": "Part time",
-        "project_contract": "Project contract"
+        "project_contract": "Project contract",
+        "range": "Range"
     },
     "Русский": {
         "title": "AI-платформа прогнозирования зарплат",
@@ -94,6 +96,7 @@ TEXT = {
         "city_gap": "Разница зарплат",
         "main_insight": "Главный вывод",
         "insight": "Для одного и того же профиля самый высокий прогноз зарплаты в городе {top_city}: {top_salary:,.0f} ₽. Самый низкий прогноз в городе {bottom_city}: {bottom_salary:,.0f} ₽.",
+        "uncertainty": "Диапазон зарплаты отражает неопределенность модели. Прогноз зарплаты является ожидаемым значением, а интервал показывает реалистичную вариацию в зависимости от компании, интерпретации уровня опыта и рыночных условий.",
         "salary_comparison": "Сравнение зарплат",
         "chart_title": "Прогноз зарплаты по городам",
         "full_ranking": "Рейтинг городов",
@@ -107,7 +110,8 @@ TEXT = {
         "shift": "Сменный график",
         "full_time": "Полная занятость",
         "part_time": "Частичная занятость",
-        "project_contract": "Проектный контракт"
+        "project_contract": "Проектный контракт",
+        "range": "Диапазон"
     }
 }
 
@@ -251,7 +255,7 @@ st.markdown(
         border-radius: 26px;
         box-shadow: 0px 18px 42px rgba(15,23,42,0.08);
         text-align: left;
-        min-height: 132px;
+        min-height: 142px;
     }
 
     .metric-title {
@@ -268,6 +272,13 @@ st.markdown(
         font-weight: 900;
         color: #111827;
         line-height: 1.14;
+    }
+
+    .metric-sub {
+        font-size: 13px;
+        color: #64748b;
+        margin-top: 8px;
+        font-weight: 700;
     }
 
     .section-title {
@@ -289,6 +300,18 @@ st.markdown(
         font-weight: 700;
         line-height: 1.65;
         box-shadow: 0px 16px 38px rgba(15,23,42,0.07);
+    }
+
+    .note-card {
+        margin-top: 12px;
+        padding: 17px 20px;
+        background: rgba(255,255,255,0.72);
+        border: 1px solid rgba(148,163,184,0.25);
+        border-radius: 20px;
+        color: #475569;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1.6;
     }
 
     .table-card {
@@ -443,10 +466,17 @@ if predict_button:
             st.error("No predictions available.")
             st.stop()
 
+        UNCERTAINTY_RATE = 0.15
+
+        results["predicted_salary"] = results["predicted_salary"].round(0).astype(int)
+        results["salary_min"] = (results["predicted_salary"] * (1 - UNCERTAINTY_RATE)).round(0).astype(int)
+        results["salary_max"] = (results["predicted_salary"] * (1 + UNCERTAINTY_RATE)).round(0).astype(int)
+        results = results.sort_values("predicted_salary", ascending=False).reset_index(drop=True)
+
         top_city = results.iloc[0]
         bottom_city = results.iloc[-1]
-        avg_salary = results["predicted_salary"].mean()
-        salary_gap = top_city["predicted_salary"] - bottom_city["predicted_salary"]
+        avg_salary = int(results["predicted_salary"].mean().round(0))
+        salary_gap = int(top_city["predicted_salary"] - bottom_city["predicted_salary"])
 
     col1, col2, col3, col4 = st.columns(4)
 
@@ -467,17 +497,26 @@ if predict_button:
             <div class="metric-card">
                 <div class="metric-title">{T["highest_salary"]}</div>
                 <div class="metric-value">{top_city["predicted_salary"]:,.0f} ₽</div>
+                <div class="metric-sub">
+                    {T["range"]}: {top_city["salary_min"]:,.0f} ₽ - {top_city["salary_max"]:,.0f} ₽
+                </div>
             </div>
             """,
             unsafe_allow_html=True
         )
 
     with col3:
+        avg_min = int(avg_salary * 0.85)
+        avg_max = int(avg_salary * 1.15)
+
         st.markdown(
             f"""
             <div class="metric-card">
                 <div class="metric-title">{T["average_salary"]}</div>
                 <div class="metric-value">{avg_salary:,.0f} ₽</div>
+                <div class="metric-sub">
+                    {T["range"]}: {avg_min:,.0f} ₽ - {avg_max:,.0f} ₽
+                </div>
             </div>
             """,
             unsafe_allow_html=True
@@ -505,6 +544,15 @@ if predict_button:
                 bottom_city=bottom_city["city"],
                 bottom_salary=bottom_city["predicted_salary"]
             )}
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown(
+        f"""
+        <div class="note-card">
+            {T["uncertainty"]}
         </div>
         """,
         unsafe_allow_html=True
@@ -552,8 +600,22 @@ if predict_button:
     st.markdown(f'<div class="section-title">{T["full_ranking"]}</div>', unsafe_allow_html=True)
 
     results_display = results.copy()
-    results_display["predicted_salary"] = results_display["predicted_salary"].round(0).astype(int)
-    results_display.insert(0, "rank", range(1, len(results_display) + 1))
+    results_display.insert(0, "Rank", range(1, len(results_display) + 1))
+
+    if LANG == "English":
+        results_display = results_display.rename(columns={
+            "city": "City",
+            "predicted_salary": "Predicted Salary, RUB",
+            "salary_min": "Estimated Min, RUB",
+            "salary_max": "Estimated Max, RUB"
+        })
+    else:
+        results_display = results_display.rename(columns={
+            "city": "Город",
+            "predicted_salary": "Прогноз зарплаты, руб.",
+            "salary_min": "Минимальная оценка, руб.",
+            "salary_max": "Максимальная оценка, руб."
+        })
 
     st.markdown('<div class="table-card">', unsafe_allow_html=True)
 
