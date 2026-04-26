@@ -164,37 +164,59 @@ st.markdown(
         background-color: #ffffff !important;
         border-radius: 14px !important;
         color: #111827 !important;
+        min-height: 44px !important;
+        padding-left: 10px !important;
+        overflow: visible !important;
     }
 
     section[data-testid="stSidebar"] div[data-baseweb="select"] span {
         color: #111827 !important;
+        font-weight: 650 !important;
     }
 
     section[data-testid="stSidebar"] div[data-baseweb="select"] input {
         color: #111827 !important;
+        padding-left: 6px !important;
     }
 
     section[data-testid="stSidebar"] [data-baseweb="tag"] {
         background-color: #dbeafe !important;
-        border: 1px solid #93c5fd !important;
+        border: 1px solid #60a5fa !important;
         border-radius: 999px !important;
         color: #0f172a !important;
+        padding-left: 14px !important;
+        padding-right: 8px !important;
+        margin-left: 8px !important;
+        max-width: 215px !important;
+        overflow: visible !important;
     }
 
     section[data-testid="stSidebar"] [data-baseweb="tag"] span,
-    section[data-testid="stSidebar"] [data-baseweb="tag"] div,
-    section[data-testid="stSidebar"] [data-baseweb="tag"] svg {
+    section[data-testid="stSidebar"] [data-baseweb="tag"] div {
         color: #0f172a !important;
-        fill: #0f172a !important;
+        font-weight: 800 !important;
+        padding-left: 2px !important;
+        white-space: nowrap !important;
+        overflow: visible !important;
+        text-overflow: clip !important;
     }
 
-    section[data-testid="stSidebar"] div[role="option"] {
+    section[data-testid="stSidebar"] [data-baseweb="tag"] svg {
+        fill: #0f172a !important;
+        color: #0f172a !important;
+    }
+
+    div[role="listbox"] {
+        background-color: #ffffff !important;
+    }
+
+    div[role="option"] {
         color: #111827 !important;
         background-color: #ffffff !important;
     }
 
-    section[data-testid="stSidebar"] div[role="listbox"] {
-        background-color: #ffffff !important;
+    div[role="option"] span {
+        color: #111827 !important;
     }
 
     .hero {
