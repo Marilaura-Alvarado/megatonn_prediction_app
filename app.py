@@ -11,7 +11,6 @@ st.set_page_config(
     layout="wide"
 )
 
-
 st.markdown(
     """
     <style>
@@ -80,76 +79,187 @@ st.markdown(
 )
 
 
-
-st.markdown('<div class="big-title">AI Salary Prediction Platform for Megatonn</div>', unsafe_allow_html=True)
 st.markdown(
-    '<div class="subtitle">Enter one profile once and compare predicted salary across all cities in the dataset.</div>',
+    '<div class="big-title">AI Salary Prediction Platform for Megatonn</div>',
+    unsafe_allow_html=True
+)
+
+st.markdown(
+    '<div class="subtitle">Enter one profile once and compare predicted salary across selected cities.</div>',
     unsafe_allow_html=True
 )
 
 
+available_cities = get_available_cities()
+
+
+# =========================
+# OPTIONS
+# =========================
+
+position_options = [
+    "Data Analyst",
+    "Business Analyst",
+    "Product Manager",
+    "Project Manager",
+    "Python Developer",
+    "Frontend Developer",
+    "Backend Developer",
+    "Data Scientist",
+    "System Analyst",
+    "HR Specialist",
+    "Accountant",
+    "Sales Manager",
+    "Marketing Specialist",
+    "Other"
+]
+
+role_area_options = [
+    "Analytics",
+    "IT",
+    "Product",
+    "Project Management",
+    "HR",
+    "Finance",
+    "Sales",
+    "Marketing",
+    "Operations",
+    "Other"
+]
+
+key_skill_options = [
+    "python", "sql", "excel", "power bi", "tableau", "pandas", "numpy",
+    "machine learning", "data analysis", "business analysis", "statistics",
+    "dashboarding", "reporting", "project management", "product analytics",
+    "crm", "1c", "git", "api", "english"
+]
+
+hard_skill_options = [
+    "python", "sql", "excel", "power bi", "tableau", "pandas", "numpy",
+    "machine learning", "scikit-learn", "lightgbm", "xgboost", "catboost",
+    "statistics", "data visualization", "etl", "api", "git", "1c"
+]
+
+soft_skill_options = [
+    "communication", "teamwork", "analytical thinking", "problem solving",
+    "attention to detail", "adaptability", "leadership", "time management",
+    "critical thinking", "stress resistance", "responsibility"
+]
+
+schedule_label_to_value = {
+    "On-site": "fullDay",
+    "Remote": "remote",
+    "Hybrid": "flexible",
+    "Shift": "shift"
+}
+
+employment_label_to_value = {
+    "Full time": "full",
+    "Part time": "part",
+    "Project contract": "project"
+}
+
+
+def experience_id_from_years(years):
+    if years == 0:
+        return "noExperience"
+    elif years <= 3:
+        return "between1And3"
+    elif years <= 6:
+        return "between3And6"
+    return "moreThan6"
+
+
+# =========================
+# SIDEBAR
+# =========================
 
 st.sidebar.header("Profile Input")
 
-role_name = st.sidebar.text_input("Position", "data analyst")
-role_area = st.sidebar.text_input("Role area", "analytics")
+selected_position = st.sidebar.selectbox("Position", position_options)
+
+if selected_position == "Other":
+    role_name = st.sidebar.text_input("Write position", "")
+else:
+    role_name = selected_position.lower()
+
+selected_role_area = st.sidebar.selectbox("Role area", role_area_options)
+
+if selected_role_area == "Other":
+    role_area = st.sidebar.text_input("Write role area", "")
+else:
+    role_area = selected_role_area.lower()
 
 experience_years = st.sidebar.slider("Experience years", 0, 15, 2)
+experience_id = experience_id_from_years(experience_years)
 
-experience_id = st.sidebar.selectbox(
-    "Experience category",
-    ["noExperience", "between1And3", "between3And6", "moreThan6"]
-)
-
-schedule_id = st.sidebar.selectbox(
+selected_schedule_label = st.sidebar.selectbox(
     "Schedule",
-    ["fullDay", "remote", "flexible", "shift"]
+    list(schedule_label_to_value.keys())
 )
+schedule_id = schedule_label_to_value[selected_schedule_label]
 
-employment_id = st.sidebar.selectbox(
+selected_employment_label = st.sidebar.selectbox(
     "Employment type",
-    ["full", "part", "project"]
+    list(employment_label_to_value.keys())
 )
+employment_id = employment_label_to_value[selected_employment_label]
 
-key_skills = st.sidebar.text_area(
+selected_key_skills = st.sidebar.multiselect(
     "Key skills",
-    "python, sql, excel, power bi"
+    key_skill_options,
+    default=["python", "sql", "excel", "power bi"]
 )
 
-hard_skills = st.sidebar.text_area(
+selected_hard_skills = st.sidebar.multiselect(
     "Hard skills",
-    "python, sql, excel"
+    hard_skill_options,
+    default=["python", "sql", "excel"]
 )
 
-soft_skills = st.sidebar.text_area(
+selected_soft_skills = st.sidebar.multiselect(
     "Soft skills",
-    "communication, teamwork, analytical thinking"
+    soft_skill_options,
+    default=["communication", "teamwork", "analytical thinking"]
+)
+
+city_options = ["All cities"] + available_cities
+
+selected_cities = st.sidebar.multiselect(
+    "Cities",
+    city_options,
+    default=["All cities"]
 )
 
 predict_button = st.sidebar.button("Predict salaries")
 
 
+# =========================
+# MAIN CONTENT
+# =========================
 
-available_cities = get_available_cities()
+if "All cities" in selected_cities or len(selected_cities) == 0:
+    final_selected_cities = available_cities
+else:
+    final_selected_cities = selected_cities
 
 st.info(
-    f"The system will generate predictions for {len(available_cities)} cities using the same profile."
+    f"The system will generate predictions for {len(final_selected_cities)} city/cities using the same profile."
 )
+
 
 if predict_button:
 
     with st.spinner("Calculating salary predictions..."):
 
-        # validation
-        if not role_name.strip():
-            st.error("Please enter a position before predicting.")
+        if not str(role_name).strip():
+            st.error("Please enter or select a position before predicting.")
             st.stop()
 
-        if not key_skills.strip() and not hard_skills.strip() and not soft_skills.strip():
-            st.error("Please enter at least one skill before predicting.")
+        if not selected_key_skills and not selected_hard_skills and not selected_soft_skills:
+            st.error("Please select at least one skill before predicting.")
             st.stop()
 
-        # build profile
         user_profile = {
             "role_name": role_name,
             "role_area": role_area,
@@ -157,12 +267,19 @@ if predict_button:
             "experience_id": experience_id,
             "schedule_id": schedule_id,
             "employment_id": employment_id,
-            "key_skills": key_skills,
-            "hard_skills": hard_skills,
-            "soft_skills": soft_skills
+            "key_skills": ", ".join(selected_key_skills),
+            "hard_skills": ", ".join(selected_hard_skills),
+            "soft_skills": ", ".join(selected_soft_skills)
         }
 
         results = predict_all_cities(user_profile)
+
+        results = results[results["city"].isin(final_selected_cities)]
+        results = results.sort_values("predicted_salary", ascending=False).reset_index(drop=True)
+
+        if results.empty:
+            st.error("No city predictions available for the selected cities.")
+            st.stop()
 
         top_city = results.iloc[0]
         bottom_city = results.iloc[-1]
@@ -215,8 +332,6 @@ if predict_button:
             unsafe_allow_html=True
         )
 
-  
-
     st.markdown('<div class="section-title">Main Insight</div>', unsafe_allow_html=True)
 
     st.success(
@@ -225,30 +340,29 @@ if predict_button:
         f"{bottom_city['city']} with {bottom_city['predicted_salary']:,.0f} ₽."
     )
 
- 
-
     left, right = st.columns(2)
 
     with left:
-        st.markdown('<div class="section-title">Top 10 Cities</div>', unsafe_allow_html=True)
+        st.markdown('<div class="section-title">Top Cities</div>', unsafe_allow_html=True)
         st.dataframe(results.head(10), use_container_width=True)
 
     with right:
-        st.markdown('<div class="section-title">Lowest 10 Cities</div>', unsafe_allow_html=True)
-        st.dataframe(results.tail(10).sort_values("predicted_salary"), use_container_width=True)
-
-
+        st.markdown('<div class="section-title">Lowest Cities</div>', unsafe_allow_html=True)
+        st.dataframe(
+            results.tail(10).sort_values("predicted_salary"),
+            use_container_width=True
+        )
 
     st.markdown('<div class="section-title">Salary Comparison by City</div>', unsafe_allow_html=True)
 
-    top_chart = results.head(20).copy()
+    chart_df = results.copy()
 
     fig = px.bar(
-        top_chart,
+        chart_df,
         x="city",
         y="predicted_salary",
         text="predicted_salary",
-        title="Top 20 Cities by Predicted Salary"
+        title="Predicted Salary by Selected City"
     )
 
     fig.update_traces(
@@ -265,11 +379,12 @@ if predict_button:
 
     st.plotly_chart(fig, use_container_width=True)
 
-
     st.markdown('<div class="section-title">Full City Ranking</div>', unsafe_allow_html=True)
 
     results_display = results.copy()
-    results_display["predicted_salary"] = results_display["predicted_salary"].round(0).astype(int)
+    results_display["predicted_salary"] = (
+        results_display["predicted_salary"].round(0).astype(int)
+    )
 
     st.dataframe(results_display, use_container_width=True)
 
@@ -287,6 +402,8 @@ else:
 
     st.write(
         """
-        Choose the parameters
+        Choose a position, role area, experience, schedule, employment type, skills, and cities.
+        The system keeps the professional profile fixed and changes only the city.
+        Then it compares predicted salaries across the selected locations.
         """
     )
