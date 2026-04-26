@@ -22,6 +22,7 @@ st.set_page_config(
 
 LANG = st.sidebar.selectbox("Language / Язык", ["English", "Русский"])
 
+
 TEXT = {
     "English": {
         "title": "AI Salary Prediction Platform",
@@ -143,6 +144,13 @@ st.markdown(
     section[data-testid="stSidebar"] {
         background: linear-gradient(180deg, #111827 0%, #172033 55%, #0f172a 100%);
         border-right: 1px solid rgba(255,255,255,0.08);
+        width: 360px !important;
+        min-width: 360px !important;
+    }
+
+    section[data-testid="stSidebar"] > div {
+        width: 360px !important;
+        min-width: 360px !important;
     }
 
     section[data-testid="stSidebar"] label,
@@ -164,8 +172,8 @@ st.markdown(
         background-color: #ffffff !important;
         border-radius: 14px !important;
         color: #111827 !important;
-        min-height: 44px !important;
-        padding-left: 10px !important;
+        min-height: 46px !important;
+        padding-left: 12px !important;
         overflow: visible !important;
     }
 
@@ -176,7 +184,7 @@ st.markdown(
 
     section[data-testid="stSidebar"] div[data-baseweb="select"] input {
         color: #111827 !important;
-        padding-left: 6px !important;
+        padding-left: 8px !important;
     }
 
     section[data-testid="stSidebar"] [data-baseweb="tag"] {
@@ -184,26 +192,27 @@ st.markdown(
         border: 1px solid #60a5fa !important;
         border-radius: 999px !important;
         color: #0f172a !important;
+        max-width: 285px !important;
+        min-width: auto !important;
         padding-left: 14px !important;
         padding-right: 8px !important;
         margin-left: 8px !important;
-        max-width: 215px !important;
-        overflow: visible !important;
+        overflow: hidden !important;
     }
 
     section[data-testid="stSidebar"] [data-baseweb="tag"] span,
     section[data-testid="stSidebar"] [data-baseweb="tag"] div {
         color: #0f172a !important;
         font-weight: 800 !important;
-        padding-left: 2px !important;
         white-space: nowrap !important;
-        overflow: visible !important;
-        text-overflow: clip !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
     }
 
     section[data-testid="stSidebar"] [data-baseweb="tag"] svg {
         fill: #0f172a !important;
         color: #0f172a !important;
+        margin-left: 4px !important;
     }
 
     div[role="listbox"] {
@@ -230,17 +239,6 @@ st.markdown(
         color: white;
         box-shadow: 0px 28px 70px rgba(30, 41, 59, 0.26);
         margin-bottom: 28px;
-    }
-
-    .hero:after {
-        content: "";
-        position: absolute;
-        right: -80px;
-        top: -80px;
-        width: 260px;
-        height: 260px;
-        border-radius: 50%;
-        background: rgba(255,255,255,0.12);
     }
 
     .hero-badge {
@@ -542,7 +540,7 @@ if predict_button:
                 <div class="metric-title">{T["highest_salary"]}</div>
                 <div class="metric-value">{top_city["predicted_salary"]:,.0f} ₽</div>
                 <div class="metric-sub">
-                    {T["range"]}: {top_city["salary_min"]:,.0f} ₽ - {top_city["salary_max"]:,.0f} ₽
+                    {T["range"]}: {top_city["salary_min"]:,.0f} ₽ to {top_city["salary_max"]:,.0f} ₽
                 </div>
             </div>
             """,
@@ -559,7 +557,7 @@ if predict_button:
                 <div class="metric-title">{T["average_salary"]}</div>
                 <div class="metric-value">{avg_salary:,.0f} ₽</div>
                 <div class="metric-sub">
-                    {T["range"]}: {avg_min:,.0f} ₽ - {avg_max:,.0f} ₽
+                    {T["range"]}: {avg_min:,.0f} ₽ to {avg_max:,.0f} ₽
                 </div>
             </div>
             """,
@@ -633,7 +631,7 @@ if predict_button:
         hovertemplate=(
             "<b>%{x}</b><br>"
             "Predicted: %{y:,.0f} ₽<br>"
-            "Estimated range: %{customdata[0]:,.0f} ₽ - %{customdata[1]:,.0f} ₽"
+            "Estimated range: %{customdata[0]:,.0f} ₽ to %{customdata[1]:,.0f} ₽"
             "<extra></extra>"
         ),
         customdata=results[["salary_min", "salary_max"]]
