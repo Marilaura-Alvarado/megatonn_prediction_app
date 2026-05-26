@@ -135,232 +135,246 @@ def login_page():
 
     .stApp {
         background:
-            radial-gradient(circle at 15% 15%, rgba(79,70,229,0.18), transparent 30%),
-            radial-gradient(circle at 85% 30%, rgba(20,184,166,0.18), transparent 28%),
-            radial-gradient(circle at 50% 95%, rgba(14,165,233,0.14), transparent 32%),
-            linear-gradient(135deg, #eef2ff 0%, #f8fafc 46%, #e0f7ff 100%);
+            radial-gradient(circle at 18% 18%, rgba(79,70,229,0.16), transparent 28%),
+            radial-gradient(circle at 80% 78%, rgba(20,184,166,0.16), transparent 30%),
+            linear-gradient(135deg, #f8fafc 0%, #eef2ff 52%, #ecfeff 100%);
     }
 
-    .block-container {
-        max-width: 1120px;
-        padding-top: 4.5rem;
+    header[data-testid="stHeader"] {
+        background: transparent;
     }
 
     section[data-testid="stSidebar"] {
         display: none;
     }
 
-    .login-wrapper {
-        display: grid;
-        grid-template-columns: 0.9fr 1.1fr;
-        gap: 34px;
-        align-items: center;
+    .block-container {
+        max-width: 1120px;
+        padding-top: 5.2rem;
+        padding-bottom: 4rem;
     }
 
-    .logo-panel {
-        min-height: 520px;
+    .brand-card {
+        min-height: 560px;
         border-radius: 34px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(255,255,255,0.55);
-        border: 1px solid rgba(255,255,255,0.75);
-        box-shadow: 0 28px 80px rgba(15,23,42,0.10);
-        backdrop-filter: blur(18px);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .logo-panel::before {
-        content: "";
-        position: absolute;
-        width: 260px;
-        height: 260px;
-        border-radius: 999px;
-        background: rgba(79,70,229,0.09);
-        top: -80px;
-        left: -70px;
-    }
-
-    .logo-panel::after {
-        content: "";
-        position: absolute;
-        width: 300px;
-        height: 300px;
-        border-radius: 999px;
-        background: rgba(20,184,166,0.12);
-        bottom: -110px;
-        right: -110px;
-    }
-
-    .form-panel {
-        min-height: 520px;
-        border-radius: 34px;
-        padding: 44px 46px;
         background:
-            radial-gradient(circle at top right, rgba(20,184,166,0.12), transparent 35%),
-            linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,250,252,0.90));
-        border: 1px solid rgba(226,232,240,0.9);
-        box-shadow: 0 28px 80px rgba(15,23,42,0.13);
-        backdrop-filter: blur(18px);
+            radial-gradient(circle at 18% 18%, rgba(255,255,255,0.20), transparent 26%),
+            linear-gradient(135deg, #0f172a 0%, #312e81 50%, #0f766e 100%);
+        box-shadow: 0 30px 80px rgba(15,23,42,0.22);
+        padding: 44px;
+        color: white;
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: space-between;
     }
 
-    .login-eyebrow {
-        display: inline-block;
+    .brand-pill {
         width: fit-content;
-        padding: 8px 14px;
+        padding: 9px 15px;
         border-radius: 999px;
-        background: #eef2ff;
-        color: #4f46e5;
-        font-size: 12px;
+        background: rgba(255,255,255,0.14);
+        border: 1px solid rgba(255,255,255,0.22);
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    .brand-title {
+        font-size: 48px;
+        line-height: 1.05;
         font-weight: 900;
-        letter-spacing: 0.4px;
-        text-transform: uppercase;
+        letter-spacing: -1.5px;
         margin-bottom: 18px;
     }
 
+    .brand-text {
+        font-size: 16px;
+        line-height: 1.7;
+        color: rgba(255,255,255,0.82);
+        font-weight: 600;
+    }
+
+    .brand-bottom {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+    }
+
+    .mini-card {
+        padding: 16px;
+        border-radius: 20px;
+        background: rgba(255,255,255,0.12);
+        border: 1px solid rgba(255,255,255,0.16);
+        backdrop-filter: blur(12px);
+    }
+
+    .mini-number {
+        font-size: 24px;
+        font-weight: 900;
+        margin-bottom: 3px;
+    }
+
+    .mini-label {
+        font-size: 12px;
+        font-weight: 700;
+        color: rgba(255,255,255,0.76);
+    }
+
+    .form-card {
+        min-height: 560px;
+        border-radius: 34px;
+        background: rgba(255,255,255,0.92);
+        border: 1px solid rgba(226,232,240,0.95);
+        box-shadow: 0 30px 80px rgba(15,23,42,0.12);
+        padding: 44px 46px;
+    }
+
+    .logo-box {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 150px;
+        margin-bottom: 20px;
+    }
+
     .login-title {
-        font-size: 42px;
-        line-height: 1.08;
+        font-size: 34px;
+        line-height: 1.1;
         font-weight: 900;
         color: #0f172a;
-        letter-spacing: -1.2px;
-        margin-bottom: 12px;
+        text-align: center;
+        letter-spacing: -0.9px;
+        margin-bottom: 8px;
     }
 
     .login-subtitle {
         color: #64748b;
         font-size: 15px;
-        line-height: 1.65;
+        line-height: 1.6;
         font-weight: 650;
-        margin-bottom: 30px;
-        max-width: 460px;
+        text-align: center;
+        margin-bottom: 28px;
     }
 
-    .login-divider {
-        height: 1px;
-        background: linear-gradient(90deg, rgba(148,163,184,0.05), rgba(148,163,184,0.42), rgba(148,163,184,0.05));
-        margin: 4px 0 24px 0;
-    }
-
-    .access-note {
-        background: linear-gradient(135deg, #ecfdf5, #eef2ff);
-        border: 1px solid rgba(20,184,166,0.18);
-        color: #334155;
+    .demo-note {
         padding: 13px 16px;
         border-radius: 18px;
+        background: linear-gradient(135deg, #eef2ff, #ecfeff);
+        border: 1px solid rgba(79,70,229,0.14);
+        color: #334155;
         font-size: 13px;
         font-weight: 750;
+        text-align: center;
         margin-bottom: 22px;
     }
 
-    div[data-testid="stTextInput"] {
-        margin-bottom: 8px;
-    }
-
     div[data-testid="stTextInput"] label {
-        font-weight: 850 !important;
         color: #334155 !important;
         font-size: 13px !important;
+        font-weight: 850 !important;
     }
 
     div[data-testid="stTextInput"] input {
-        border-radius: 16px !important;
         min-height: 50px !important;
+        border-radius: 16px !important;
         background: #ffffff !important;
         color: #111827 !important;
         border: 1px solid #cbd5e1 !important;
-        box-shadow: 0px 10px 25px rgba(15,23,42,0.05) !important;
-        font-weight: 750 !important;
-        padding-left: 16px !important;
+        box-shadow: 0px 10px 24px rgba(15,23,42,0.05) !important;
+        font-weight: 700 !important;
     }
 
     div[data-testid="stTextInput"] input:focus {
-        border: 1px solid #4f46e5 !important;
-        box-shadow: 0px 0px 0px 4px rgba(79,70,229,0.12) !important;
-    }
-
-    div[data-testid="stTextInput"] input::placeholder {
-        color: #94a3b8 !important;
+        border-color: #4f46e5 !important;
+        box-shadow: 0 0 0 4px rgba(79,70,229,0.13) !important;
     }
 
     .stButton>button {
         width: 100%;
-        border-radius: 18px;
-        height: 56px;
-        font-weight: 900;
+        height: 54px;
+        border-radius: 17px;
         background: linear-gradient(135deg, #4f46e5 0%, #0f766e 100%);
-        color: white;
+        color: #ffffff;
         border: none;
-        box-shadow: 0px 18px 34px rgba(79,70,229,0.30);
-        margin-top: 14px;
-        letter-spacing: 0.2px;
+        font-weight: 900;
+        box-shadow: 0px 16px 30px rgba(79,70,229,0.28);
+        margin-top: 10px;
     }
 
     .stButton>button:hover {
         background: linear-gradient(135deg, #4338ca 0%, #0d9488 100%);
         color: white;
         transform: translateY(-1px);
-        box-shadow: 0px 22px 42px rgba(79,70,229,0.36);
     }
 
-    .security-note {
+    .small-secure {
         text-align: center;
         color: #94a3b8;
         font-size: 12px;
         font-weight: 700;
-        margin-top: 18px;
-    }
-
-    @media (max-width: 900px) {
-        .login-wrapper {
-            grid-template-columns: 1fr;
-        }
-        .logo-panel {
-            min-height: 280px;
-        }
-        .form-panel {
-            min-height: auto;
-        }
+        margin-top: 16px;
     }
     </style>
     """, unsafe_allow_html=True)
 
-    st.markdown('<div class="login-wrapper">', unsafe_allow_html=True)
+    left, right = st.columns([1.05, 0.95], gap="large")
 
-    st.markdown('<div class="logo-panel">', unsafe_allow_html=True)
-    if os.path.exists("logo.png"):
-        st.image("logo.png", width=210)
-    else:
-        st.markdown("### Megatonn")
-    st.markdown('</div>', unsafe_allow_html=True)
-
-    st.markdown('''
-        <div class="form-panel">
-            <div class="login-eyebrow">Secure access</div>
-            <div class="login-title">Welcome back</div>
-            <div class="login-subtitle">
-                Sign in to open the Megatonn AI Salary Prediction Platform and compare salary forecasts by city.
+    with left:
+        st.markdown("""
+        <div class="brand-card">
+            <div>
+                <div class="brand-pill">Megatonn Analytics</div>
             </div>
-            <div class="login-divider"></div>
-            <div class="access-note">Demo credentials: <b>Admin</b> / <b>admin</b></div>
-    ''', unsafe_allow_html=True)
+            <div>
+                <div class="brand-title">AI Salary Prediction Platform</div>
+                <div class="brand-text">
+                    Enter one professional profile and compare predicted salary ranges across cities in a clean analytical dashboard.
+                </div>
+            </div>
+            <div class="brand-bottom">
+                <div class="mini-card">
+                    <div class="mini-number">9</div>
+                    <div class="mini-label">cities</div>
+                </div>
+                <div class="mini-card">
+                    <div class="mini-number">AI</div>
+                    <div class="mini-label">forecast</div>
+                </div>
+                <div class="mini-card">
+                    <div class="mini-number">±15%</div>
+                    <div class="mini-label">range</div>
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
-    username = st.text_input("Username", value="Admin", placeholder="Admin")
-    password = st.text_input("Password", value="admin", type="password", placeholder="admin")
-
-    if st.button("Sign in"):
-        if username == "Admin" and password == "admin":
-            st.session_state.logged_in = True
-            st.session_state.username = username
-            st.rerun()
+    with right:
+        st.markdown('<div class="form-card">', unsafe_allow_html=True)
+        st.markdown('<div class="logo-box">', unsafe_allow_html=True)
+        if os.path.exists("logo.png"):
+            st.image("logo.png", width=145)
         else:
-            st.error("Incorrect username or password. Please use Admin / admin.")
+            st.markdown("### Megatonn")
+        st.markdown('</div>', unsafe_allow_html=True)
 
-    st.markdown('<div class="security-note">Protected analytical workspace</div></div></div>', unsafe_allow_html=True)
+        st.markdown("""
+            <div class="login-title">Welcome back</div>
+            <div class="login-subtitle">Sign in to continue to your salary prediction workspace.</div>
+            <div class="demo-note">Username: <b>Admin</b> &nbsp; Password: <b>admin</b></div>
+        """, unsafe_allow_html=True)
+
+        username = st.text_input("Username", value="Admin", placeholder="Admin")
+        password = st.text_input("Password", value="admin", type="password", placeholder="admin")
+
+        if st.button("Sign in"):
+            if username == "Admin" and password == "admin":
+                st.session_state.logged_in = True
+                st.session_state.username = username
+                st.rerun()
+            else:
+                st.error("Incorrect username or password. Please use Admin / admin.")
+
+        st.markdown('<div class="small-secure">Protected demo access</div>', unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
 
 
 if not st.session_state.logged_in:
