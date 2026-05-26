@@ -40,9 +40,22 @@ def login_page():
 
         .stApp {
             background:
-                radial-gradient(circle at top left, rgba(79, 70, 229, 0.10), transparent 34%),
-                radial-gradient(circle at bottom right, rgba(15, 118, 110, 0.10), transparent 34%),
-                linear-gradient(135deg, #f8fafc 0%, #eef2ff 50%, #f8fafc 100%);
+                radial-gradient(circle at 12% 15%, rgba(124, 58, 237, 0.10), transparent 28%),
+                radial-gradient(circle at 85% 18%, rgba(37, 99, 235, 0.10), transparent 30%),
+                radial-gradient(circle at 18% 80%, rgba(15, 118, 110, 0.08), transparent 30%),
+                linear-gradient(135deg, #f8fbff 0%, #f3f6ff 45%, #f8fbff 100%);
+        }
+
+        .stApp::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background-image:
+                linear-gradient(rgba(99,102,241,0.045) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(99,102,241,0.045) 1px, transparent 1px);
+            background-size: 42px 42px;
+            mask-image: radial-gradient(circle at 82% 8%, black 0%, transparent 35%);
         }
 
         header[data-testid="stHeader"] {
@@ -54,16 +67,18 @@ def login_page():
         }
 
         .block-container {
-            max-width: 440px;
-            padding-top: 5.5rem;
+            max-width: 760px;
+            padding-top: 4.6rem;
+            padding-bottom: 3.5rem;
         }
 
         .login-card {
-            background: rgba(255, 255, 255, 0.96);
-            border: 1px solid rgba(226, 232, 240, 0.9);
-            border-radius: 30px;
-            padding: 40px 36px 34px 36px;
-            box-shadow: 0 26px 65px rgba(15, 23, 42, 0.10);
+            width: 100%;
+            background: rgba(255, 255, 255, 0.94);
+            border: 1px solid rgba(226, 232, 240, 0.95);
+            border-radius: 32px;
+            padding: 48px 56px 46px 56px;
+            box-shadow: 0 30px 90px rgba(15, 23, 42, 0.12);
             backdrop-filter: blur(18px);
         }
 
@@ -71,85 +86,141 @@ def login_page():
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 28px;
         }
 
         .login-title {
             text-align: center;
-            font-size: 32px;
+            font-size: 38px;
+            line-height: 1.1;
             font-weight: 900;
-            color: #0f172a;
-            letter-spacing: -0.9px;
-            margin-bottom: 8px;
+            color: #111827;
+            letter-spacing: -1.1px;
+            margin-bottom: 18px;
         }
 
-        .login-subtitle {
-            text-align: center;
-            color: #64748b;
-            font-size: 14px;
-            font-weight: 650;
-            line-height: 1.55;
-            margin-bottom: 26px;
+        .title-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            margin-bottom: 34px;
         }
 
-        .demo-access {
-            background: linear-gradient(135deg, #eef2ff 0%, #ecfeff 100%);
-            border: 1px solid rgba(79, 70, 229, 0.12);
-            color: #475569;
-            padding: 11px 14px;
-            border-radius: 16px;
-            text-align: center;
-            font-size: 13px;
-            font-weight: 750;
-            margin-bottom: 24px;
+        .title-divider .line {
+            width: 70px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #a78bfa);
+        }
+
+        .title-divider .line.right {
+            background: linear-gradient(90deg, #a78bfa, transparent);
+        }
+
+        .title-divider .dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 999px;
+            background: #7c3aed;
+            box-shadow: 0 0 0 6px rgba(124,58,237,0.10);
+        }
+
+        .login-field-spacer {
+            height: 6px;
+        }
+
+        div[data-testid="stTextInput"] {
+            margin-bottom: 18px;
         }
 
         div[data-testid="stTextInput"] label {
             color: #334155 !important;
-            font-size: 13px !important;
-            font-weight: 800 !important;
+            font-size: 15px !important;
+            font-weight: 750 !important;
+            padding-bottom: 7px !important;
         }
 
         div[data-testid="stTextInput"] input {
-            min-height: 50px !important;
-            border-radius: 15px !important;
-            background: #ffffff !important;
+            min-height: 58px !important;
+            border-radius: 14px !important;
+            background: rgba(255,255,255,0.96) !important;
             color: #111827 !important;
-            border: 1px solid #d7dee8 !important;
-            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.035) !important;
-            font-weight: 650 !important;
+            border: 1px solid #d8def0 !important;
+            box-shadow: 0 12px 26px rgba(15, 23, 42, 0.035) !important;
+            font-weight: 700 !important;
+            font-size: 16px !important;
+            padding-left: 18px !important;
         }
 
         div[data-testid="stTextInput"] input:focus {
-            border-color: #4f46e5 !important;
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12) !important;
+            border-color: #8b5cf6 !important;
+            box-shadow: 0 0 0 4px rgba(139,92,246,0.13), 0 12px 26px rgba(15, 23, 42, 0.04) !important;
+        }
+
+        div[data-testid="stTextInput"] input::placeholder {
+            color: #94a3b8 !important;
         }
 
         .stButton > button {
             width: 100%;
-            height: 52px;
-            border-radius: 15px;
-            background: linear-gradient(135deg, #4f46e5 0%, #0f766e 100%);
+            height: 62px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #7c3aed 0%, #2563eb 100%);
             color: white;
             border: none;
-            font-weight: 900;
-            box-shadow: 0 14px 30px rgba(79, 70, 229, 0.25);
-            margin-top: 12px;
+            font-size: 18px;
+            font-weight: 850;
             letter-spacing: 0.2px;
+            box-shadow: 0 18px 36px rgba(37, 99, 235, 0.26);
+            margin-top: 14px;
         }
 
         .stButton > button:hover {
-            background: linear-gradient(135deg, #4338ca 0%, #0d9488 100%);
+            background: linear-gradient(135deg, #6d28d9 0%, #1d4ed8 100%);
             color: white;
             transform: translateY(-1px);
+            box-shadow: 0 22px 44px rgba(37, 99, 235, 0.32);
         }
 
         .login-footer {
-            text-align: center;
-            color: #94a3b8;
-            font-size: 12px;
-            font-weight: 650;
-            margin-top: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 18px;
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 750;
+            margin-top: 36px;
+        }
+
+        .login-footer::before,
+        .login-footer::after {
+            content: "";
+            width: 88px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #cbd5e1);
+        }
+
+        .login-footer::after {
+            background: linear-gradient(90deg, #cbd5e1, transparent);
+        }
+
+        @media (max-width: 760px) {
+            .block-container {
+                max-width: 92vw;
+                padding-top: 2.5rem;
+            }
+            .login-card {
+                padding: 34px 24px 32px 24px;
+                border-radius: 26px;
+            }
+            .login-title {
+                font-size: 31px;
+            }
+            .login-footer::before,
+            .login-footer::after {
+                width: 42px;
+            }
         }
         </style>
         """,
@@ -160,7 +231,7 @@ def login_page():
 
     st.markdown('<div class="logo-area">', unsafe_allow_html=True)
     if os.path.exists("logo.png"):
-        st.image("logo.png", width=125)
+        st.image("logo.png", width=155)
     else:
         st.markdown("### Megatonn")
     st.markdown('</div>', unsafe_allow_html=True)
@@ -168,8 +239,11 @@ def login_page():
     st.markdown(
         """
         <div class="login-title">Welcome back</div>
-        <div class="login-subtitle">Access your salary prediction dashboard.</div>
-        <div class="demo-access">Username: <b>Admin</b> &nbsp; Password: <b>admin</b></div>
+        <div class="title-divider">
+            <div class="line"></div>
+            <div class="dot"></div>
+            <div class="line right"></div>
+        </div>
         """,
         unsafe_allow_html=True
     )
@@ -177,7 +251,7 @@ def login_page():
     username = st.text_input("Username", value="Admin", placeholder="Admin")
     password = st.text_input("Password", value="admin", type="password", placeholder="admin")
 
-    if st.button("Sign in"):
+    if st.button("Sign in  →"):
         if username == "Admin" and password == "admin":
             st.session_state.logged_in = True
             st.session_state.username = username
@@ -883,4 +957,3 @@ else:
         """,
         unsafe_allow_html=True
     )
-
