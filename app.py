@@ -135,183 +135,74 @@ def login_page():
 
     .stApp {
         background:
-            radial-gradient(circle at 15% 18%, rgba(79,70,229,0.22), transparent 28%),
-            radial-gradient(circle at 85% 16%, rgba(20,184,166,0.20), transparent 26%),
-            radial-gradient(circle at 65% 90%, rgba(14,165,233,0.16), transparent 30%),
-            linear-gradient(135deg, #f8fafc 0%, #eef2ff 48%, #f0fdfa 100%);
+            radial-gradient(circle at 12% 12%, rgba(99,102,241,0.12), transparent 28%),
+            radial-gradient(circle at 88% 35%, rgba(20,184,166,0.16), transparent 28%),
+            linear-gradient(135deg, #eef2ff 0%, #e0f7ff 58%, #e6fffb 100%);
     }
 
     .block-container {
-        max-width: 1180px;
-        padding-top: 4.2rem;
+        max-width: 1080px;
+        padding-top: 5.5rem;
     }
 
     section[data-testid="stSidebar"] {
         display: none;
     }
 
-    .login-shell {
-        display: grid;
-        grid-template-columns: 1.05fr 0.95fr;
-        gap: 28px;
-        align-items: stretch;
-    }
-
-    .login-hero {
-        position: relative;
-        overflow: hidden;
-        min-height: 560px;
-        border-radius: 36px;
-        padding: 46px;
-        color: white;
-        background:
-            radial-gradient(circle at 22% 18%, rgba(255,255,255,0.22), transparent 24%),
-            linear-gradient(135deg, #0f172a 0%, #312e81 48%, #0f766e 100%);
-        box-shadow: 0px 30px 80px rgba(15,23,42,0.22);
-    }
-
-    .login-hero::after {
-        content: "";
-        position: absolute;
-        width: 320px;
-        height: 320px;
-        right: -90px;
-        bottom: -90px;
-        border-radius: 999px;
-        background: rgba(255,255,255,0.10);
-    }
-
-    .brand-line {
-        display: inline-flex;
+    .login-logo-area {
+        width: 100%;
+        min-height: 360px;
+        display: flex;
         align-items: center;
-        gap: 12px;
-        padding: 10px 16px;
-        border-radius: 999px;
-        background: rgba(255,255,255,0.12);
-        border: 1px solid rgba(255,255,255,0.22);
-        font-size: 13px;
-        font-weight: 800;
-        margin-bottom: 76px;
+        justify-content: center;
+        border-radius: 0px;
+        background: rgba(255,255,255,0.18);
+        margin-bottom: 26px;
     }
 
-    .hero-big-title {
-        font-size: 54px;
-        line-height: 1.02;
-        font-weight: 900;
-        letter-spacing: -1.8px;
-        max-width: 560px;
-        margin-bottom: 20px;
-    }
-
-    .hero-text {
-        font-size: 17px;
-        line-height: 1.75;
-        color: rgba(255,255,255,0.82);
-        max-width: 560px;
-        font-weight: 600;
-    }
-
-    .hero-stats {
-        position: absolute;
-        left: 46px;
-        right: 46px;
-        bottom: 42px;
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 14px;
-        z-index: 2;
-    }
-
-    .hero-stat {
-        padding: 18px;
-        border-radius: 22px;
-        background: rgba(255,255,255,0.12);
-        border: 1px solid rgba(255,255,255,0.18);
-        backdrop-filter: blur(12px);
-    }
-
-    .hero-stat-number {
-        font-size: 26px;
-        font-weight: 900;
-        margin-bottom: 4px;
-    }
-
-    .hero-stat-label {
-        font-size: 12px;
-        color: rgba(255,255,255,0.78);
-        font-weight: 700;
-    }
-
-    .login-card {
-        min-height: 560px;
-        background: rgba(255,255,255,0.88);
-        border: 1px solid rgba(226,232,240,0.95);
-        border-radius: 36px;
-        padding: 44px 42px;
-        box-shadow: 0px 30px 80px rgba(15,23,42,0.14);
+    .login-form-area {
+        background: rgba(224, 247, 255, 0.58);
+        border: 1px solid rgba(255,255,255,0.45);
+        box-shadow: 0px 24px 70px rgba(15, 23, 42, 0.08);
         backdrop-filter: blur(18px);
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
-
-    .logo-wrap {
-        display: flex;
-        justify-content: center;
-        margin-bottom: 22px;
-    }
-
-    .login-title {
-        font-size: 34px;
-        font-weight: 900;
-        color: #111827;
-        letter-spacing: -0.8px;
-        text-align: center;
-        margin-bottom: 8px;
-    }
-
-    .login-subtitle {
-        color: #64748b;
-        text-align: center;
+        padding: 26px 30px 34px 30px;
+        border-radius: 0px;
         margin-bottom: 30px;
-        font-weight: 650;
-        line-height: 1.55;
-    }
-
-    .credential-card {
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 20px;
-        padding: 14px 16px;
-        margin-bottom: 22px;
-        color: #475569;
-        font-size: 13px;
-        font-weight: 700;
-        text-align: center;
     }
 
     div[data-testid="stTextInput"] label {
-        font-weight: 800 !important;
+        font-weight: 600 !important;
         color: #334155 !important;
+        font-size: 13px !important;
     }
 
     div[data-testid="stTextInput"] input {
-        border-radius: 16px !important;
-        min-height: 50px !important;
-        border: 1px solid #cbd5e1 !important;
-        box-shadow: 0px 8px 20px rgba(15,23,42,0.04) !important;
+        border-radius: 10px !important;
+        min-height: 42px !important;
+        background: #272832 !important;
+        color: #f8fafc !important;
+        border: 1px solid rgba(255,255,255,0.65) !important;
+        box-shadow: none !important;
+        font-weight: 700 !important;
+    }
+
+    div[data-testid="stTextInput"] input::placeholder {
+        color: #a1a1aa !important;
     }
 
     .stButton>button {
-        width: 100%;
-        border-radius: 18px;
+        width: auto;
+        min-width: 70px;
+        border-radius: 16px;
         height: 56px;
-        font-weight: 900;
+        padding-left: 14px;
+        padding-right: 14px;
+        font-weight: 850;
         background: linear-gradient(135deg, #4f46e5 0%, #0f766e 100%);
         color: white;
         border: none;
-        box-shadow: 0px 16px 30px rgba(79,70,229,0.32);
-        margin-top: 12px;
+        box-shadow: 0px 12px 24px rgba(79,70,229,0.22);
+        margin-top: 10px;
     }
 
     .stButton>button:hover {
@@ -319,66 +210,20 @@ def login_page():
         color: white;
         transform: translateY(-1px);
     }
-
-    @media (max-width: 900px) {
-        .login-shell {
-            grid-template-columns: 1fr;
-        }
-        .login-hero {
-            min-height: 430px;
-        }
-        .hero-stats {
-            position: relative;
-            left: auto;
-            right: auto;
-            bottom: auto;
-            margin-top: 34px;
-        }
-    }
     </style>
     """, unsafe_allow_html=True)
 
-    st.markdown("""
-    <div class="login-shell">
-        <div class="login-hero">
-            <div class="brand-line">Megatonn Analytics</div>
-            <div class="hero-big-title">AI-powered salary insights for smarter decisions</div>
-            <div class="hero-text">
-                Compare how the same professional profile is valued across cities using one clean analytical dashboard.
-            </div>
-            <div class="hero-stats">
-                <div class="hero-stat">
-                    <div class="hero-stat-number">9</div>
-                    <div class="hero-stat-label">cities compared</div>
-                </div>
-                <div class="hero-stat">
-                    <div class="hero-stat-number">AI</div>
-                    <div class="hero-stat-label">salary forecast</div>
-                </div>
-                <div class="hero-stat">
-                    <div class="hero-stat-number">±15%</div>
-                    <div class="hero-stat-label">range view</div>
-                </div>
-            </div>
-        </div>
-        <div class="login-card">
-    """, unsafe_allow_html=True)
-
-    st.markdown('<div class="logo-wrap">', unsafe_allow_html=True)
+    st.markdown('<div class="login-logo-area">', unsafe_allow_html=True)
     if os.path.exists("logo.png"):
-        st.image("logo.png", width=150)
+        st.image("logo.png", width=170)
     else:
         st.markdown("### Megatonn")
     st.markdown('</div>', unsafe_allow_html=True)
 
-    st.markdown("""
-        <div class="login-title">Welcome back</div>
-        <div class="login-subtitle">Sign in to continue to the AI Salary Prediction Platform.</div>
-        <div class="credential-card">Use username <b>Admin</b> and password <b>admin</b></div>
-    """, unsafe_allow_html=True)
+    st.markdown('<div class="login-form-area">', unsafe_allow_html=True)
 
-    username = st.text_input("Username", placeholder="Admin")
-    password = st.text_input("Password", type="password", placeholder="admin")
+    username = st.text_input("Username", value="Admin", placeholder="Admin")
+    password = st.text_input("Password", value="admin", type="password", placeholder="admin")
 
     if st.button("Sign in"):
         if username == "Admin" and password == "admin":
@@ -388,10 +233,7 @@ def login_page():
         else:
             st.error("Incorrect username or password. Please use Admin / admin.")
 
-    st.markdown("""
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
 
 if not st.session_state.logged_in:
