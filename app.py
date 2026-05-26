@@ -15,12 +15,187 @@ from inference import (
 
 
 st.set_page_config(
-    page_title=" AI Salary Prediction Platform by Megatonn ",
+    page_title="AI Salary Prediction Platform by Megatonn",
     page_icon="💼",
     layout="wide"
 )
 
 
+# -----------------------------
+# Login state
+# -----------------------------
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+
+
+def login_page():
+    st.markdown(
+        """
+        <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+        html, body, [class*="css"] {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .stApp {
+            background:
+                radial-gradient(circle at top left, rgba(79, 70, 229, 0.10), transparent 34%),
+                radial-gradient(circle at bottom right, rgba(15, 118, 110, 0.10), transparent 34%),
+                linear-gradient(135deg, #f8fafc 0%, #eef2ff 50%, #f8fafc 100%);
+        }
+
+        header[data-testid="stHeader"] {
+            background: transparent;
+        }
+
+        section[data-testid="stSidebar"] {
+            display: none;
+        }
+
+        .block-container {
+            max-width: 480px;
+            padding-top: 6rem;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid rgba(226, 232, 240, 0.95);
+            border-radius: 28px;
+            padding: 42px 38px 36px 38px;
+            box-shadow: 0 24px 70px rgba(15, 23, 42, 0.11);
+            backdrop-filter: blur(16px);
+        }
+
+        .logo-area {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .login-title {
+            text-align: center;
+            font-size: 30px;
+            font-weight: 900;
+            color: #0f172a;
+            letter-spacing: -0.8px;
+            margin-bottom: 8px;
+        }
+
+        .login-subtitle {
+            text-align: center;
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 1.6;
+            margin-bottom: 28px;
+        }
+
+        .demo-access {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            color: #475569;
+            padding: 12px 14px;
+            border-radius: 16px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 22px;
+        }
+
+        div[data-testid="stTextInput"] label {
+            color: #334155 !important;
+            font-size: 13px !important;
+            font-weight: 800 !important;
+        }
+
+        div[data-testid="stTextInput"] input {
+            min-height: 48px !important;
+            border-radius: 14px !important;
+            background: #ffffff !important;
+            color: #111827 !important;
+            border: 1px solid #cbd5e1 !important;
+            box-shadow: none !important;
+            font-weight: 650 !important;
+        }
+
+        div[data-testid="stTextInput"] input:focus {
+            border-color: #4f46e5 !important;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12) !important;
+        }
+
+        .stButton > button {
+            width: 100%;
+            height: 50px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #4f46e5 0%, #0f766e 100%);
+            color: white;
+            border: none;
+            font-weight: 850;
+            box-shadow: 0 12px 28px rgba(79, 70, 229, 0.24);
+            margin-top: 10px;
+        }
+
+        .stButton > button:hover {
+            background: linear-gradient(135deg, #4338ca 0%, #0d9488 100%);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .login-footer {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 12px;
+            font-weight: 650;
+            margin-top: 18px;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown('<div class="login-card">', unsafe_allow_html=True)
+
+    st.markdown('<div class="logo-area">', unsafe_allow_html=True)
+    if os.path.exists("logo.png"):
+        st.image("logo.png", width=135)
+    else:
+        st.markdown("### Megatonn")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    st.markdown(
+        """
+        <div class="login-title">Welcome back</div>
+        <div class="login-subtitle">Sign in to access the AI Salary Prediction Platform.</div>
+        <div class="demo-access">Username: <b>Admin</b> &nbsp; Password: <b>admin</b></div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    username = st.text_input("Username", value="Admin", placeholder="Admin")
+    password = st.text_input("Password", value="admin", type="password", placeholder="admin")
+
+    if st.button("Sign in"):
+        if username == "Admin" and password == "admin":
+            st.session_state.logged_in = True
+            st.session_state.username = username
+            st.rerun()
+        else:
+            st.error("Incorrect username or password.")
+
+    st.markdown('<div class="login-footer">Megatonn Analytics</div>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+
+
+if not st.session_state.logged_in:
+    login_page()
+    st.stop()
+
+
+# -----------------------------
+# Main app language and text
+# -----------------------------
 LANG = st.sidebar.selectbox("Language / Язык", ["English", "Русский"])
 
 TEXT = {
@@ -42,7 +217,7 @@ TEXT = {
         "cities": "Cities",
         "all_cities": "All cities",
         "predict": "Generate salary forecast",
-        "info": "Forecast will be generated with the number of city/cities you chose using one fixed profile.",
+        "info": "Forecast will be generated for {n} city/cities using one fixed profile.",
         "spinner": "Calculating salary predictions...",
         "error_position": "Please enter or select a position before predicting.",
         "error_skills": "Please select at least one skill before predicting.",
@@ -67,8 +242,7 @@ TEXT = {
         "full_time": "Full time",
         "part_time": "Part time",
         "project_contract": "Project contract",
-        "range": "Range",
-        "selected": "Selected"
+        "range": "Range"
     },
     "Русский": {
         "title": "AI-платформа прогнозирования зарплат",
@@ -113,275 +287,16 @@ TEXT = {
         "full_time": "Полная занятость",
         "part_time": "Частичная занятость",
         "project_contract": "Проектный контракт",
-        "range": "Диапазон",
-        "selected": "Выбрано"
+        "range": "Диапазон"
     }
 }
 
 T = TEXT[LANG]
 
 
-if "logged_in" not in st.session_state:
-    st.session_state.logged_in = False
-
-def login_page():
-    st.markdown("""
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-
-    html, body, [class*="css"] {
-        font-family: 'Inter', sans-serif;
-    }
-
-    .stApp {
-        background:
-            radial-gradient(circle at 18% 18%, rgba(79,70,229,0.16), transparent 28%),
-            radial-gradient(circle at 80% 78%, rgba(20,184,166,0.16), transparent 30%),
-            linear-gradient(135deg, #f8fafc 0%, #eef2ff 52%, #ecfeff 100%);
-    }
-
-    header[data-testid="stHeader"] {
-        background: transparent;
-    }
-
-    section[data-testid="stSidebar"] {
-        display: none;
-    }
-
-    .block-container {
-        max-width: 1120px;
-        padding-top: 5.2rem;
-        padding-bottom: 4rem;
-    }
-
-    .brand-card {
-        min-height: 560px;
-        border-radius: 34px;
-        background:
-            radial-gradient(circle at 18% 18%, rgba(255,255,255,0.20), transparent 26%),
-            linear-gradient(135deg, #0f172a 0%, #312e81 50%, #0f766e 100%);
-        box-shadow: 0 30px 80px rgba(15,23,42,0.22);
-        padding: 44px;
-        color: white;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-    }
-
-    .brand-pill {
-        width: fit-content;
-        padding: 9px 15px;
-        border-radius: 999px;
-        background: rgba(255,255,255,0.14);
-        border: 1px solid rgba(255,255,255,0.22);
-        font-size: 13px;
-        font-weight: 800;
-    }
-
-    .brand-title {
-        font-size: 48px;
-        line-height: 1.05;
-        font-weight: 900;
-        letter-spacing: -1.5px;
-        margin-bottom: 18px;
-    }
-
-    .brand-text {
-        font-size: 16px;
-        line-height: 1.7;
-        color: rgba(255,255,255,0.82);
-        font-weight: 600;
-    }
-
-    .brand-bottom {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 12px;
-    }
-
-    .mini-card {
-        padding: 16px;
-        border-radius: 20px;
-        background: rgba(255,255,255,0.12);
-        border: 1px solid rgba(255,255,255,0.16);
-        backdrop-filter: blur(12px);
-    }
-
-    .mini-number {
-        font-size: 24px;
-        font-weight: 900;
-        margin-bottom: 3px;
-    }
-
-    .mini-label {
-        font-size: 12px;
-        font-weight: 700;
-        color: rgba(255,255,255,0.76);
-    }
-
-    .form-card {
-        min-height: 560px;
-        border-radius: 34px;
-        background: rgba(255,255,255,0.92);
-        border: 1px solid rgba(226,232,240,0.95);
-        box-shadow: 0 30px 80px rgba(15,23,42,0.12);
-        padding: 44px 46px;
-    }
-
-    .logo-box {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 150px;
-        margin-bottom: 20px;
-    }
-
-    .login-title {
-        font-size: 34px;
-        line-height: 1.1;
-        font-weight: 900;
-        color: #0f172a;
-        text-align: center;
-        letter-spacing: -0.9px;
-        margin-bottom: 8px;
-    }
-
-    .login-subtitle {
-        color: #64748b;
-        font-size: 15px;
-        line-height: 1.6;
-        font-weight: 650;
-        text-align: center;
-        margin-bottom: 28px;
-    }
-
-    .demo-note {
-        padding: 13px 16px;
-        border-radius: 18px;
-        background: linear-gradient(135deg, #eef2ff, #ecfeff);
-        border: 1px solid rgba(79,70,229,0.14);
-        color: #334155;
-        font-size: 13px;
-        font-weight: 750;
-        text-align: center;
-        margin-bottom: 22px;
-    }
-
-    div[data-testid="stTextInput"] label {
-        color: #334155 !important;
-        font-size: 13px !important;
-        font-weight: 850 !important;
-    }
-
-    div[data-testid="stTextInput"] input {
-        min-height: 50px !important;
-        border-radius: 16px !important;
-        background: #ffffff !important;
-        color: #111827 !important;
-        border: 1px solid #cbd5e1 !important;
-        box-shadow: 0px 10px 24px rgba(15,23,42,0.05) !important;
-        font-weight: 700 !important;
-    }
-
-    div[data-testid="stTextInput"] input:focus {
-        border-color: #4f46e5 !important;
-        box-shadow: 0 0 0 4px rgba(79,70,229,0.13) !important;
-    }
-
-    .stButton>button {
-        width: 100%;
-        height: 54px;
-        border-radius: 17px;
-        background: linear-gradient(135deg, #4f46e5 0%, #0f766e 100%);
-        color: #ffffff;
-        border: none;
-        font-weight: 900;
-        box-shadow: 0px 16px 30px rgba(79,70,229,0.28);
-        margin-top: 10px;
-    }
-
-    .stButton>button:hover {
-        background: linear-gradient(135deg, #4338ca 0%, #0d9488 100%);
-        color: white;
-        transform: translateY(-1px);
-    }
-
-    .small-secure {
-        text-align: center;
-        color: #94a3b8;
-        font-size: 12px;
-        font-weight: 700;
-        margin-top: 16px;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-    left, right = st.columns([1.05, 0.95], gap="large")
-
-    with left:
-        st.markdown("""
-        <div class="brand-card">
-            <div>
-                <div class="brand-pill">Megatonn Analytics</div>
-            </div>
-            <div>
-                <div class="brand-title">AI Salary Prediction Platform</div>
-                <div class="brand-text">
-                    Enter one professional profile and compare predicted salary ranges across cities in a clean analytical dashboard.
-                </div>
-            </div>
-            <div class="brand-bottom">
-                <div class="mini-card">
-                    <div class="mini-number">9</div>
-                    <div class="mini-label">cities</div>
-                </div>
-                <div class="mini-card">
-                    <div class="mini-number">AI</div>
-                    <div class="mini-label">forecast</div>
-                </div>
-                <div class="mini-card">
-                    <div class="mini-number">±15%</div>
-                    <div class="mini-label">range</div>
-                </div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-
-    with right:
-        st.markdown('<div class="form-card">', unsafe_allow_html=True)
-        st.markdown('<div class="logo-box">', unsafe_allow_html=True)
-        if os.path.exists("logo.png"):
-            st.image("logo.png", width=145)
-        else:
-            st.markdown("### Megatonn")
-        st.markdown('</div>', unsafe_allow_html=True)
-
-        st.markdown("""
-            <div class="login-title">Welcome back</div>
-            <div class="login-subtitle">Sign in to continue to your salary prediction workspace.</div>
-            <div class="demo-note">Username: <b>Admin</b> &nbsp; Password: <b>admin</b></div>
-        """, unsafe_allow_html=True)
-
-        username = st.text_input("Username", value="Admin", placeholder="Admin")
-        password = st.text_input("Password", value="admin", type="password", placeholder="admin")
-
-        if st.button("Sign in"):
-            if username == "Admin" and password == "admin":
-                st.session_state.logged_in = True
-                st.session_state.username = username
-                st.rerun()
-            else:
-                st.error("Incorrect username or password. Please use Admin / admin.")
-
-        st.markdown('<div class="small-secure">Protected demo access</div>', unsafe_allow_html=True)
-        st.markdown('</div>', unsafe_allow_html=True)
-
-
-if not st.session_state.logged_in:
-    login_page()
-    st.stop()
-
-
+# -----------------------------
+# Main app styling
+# -----------------------------
 st.markdown(
     """
     <style>
@@ -436,30 +351,19 @@ st.markdown(
         border-radius: 14px !important;
         color: #111827 !important;
         min-height: 46px !important;
-        padding-left: 12px !important;
+        padding-left: 18px !important;
+        padding-right: 12px !important;
     }
 
-    section[data-testid="stSidebar"] div[data-baseweb="select"] span {
-        color: #111827 !important;
-        font-weight: 650 !important;
-    }
-
+    section[data-testid="stSidebar"] div[data-baseweb="select"] span,
     section[data-testid="stSidebar"] div[data-baseweb="select"] input {
         color: #111827 !important;
+        font-weight: 650 !important;
     }
 
     section[data-testid="stSidebar"] div[data-baseweb="select"],
     section[data-testid="stSidebar"] div[data-baseweb="select"] * {
         overflow: visible !important;
-    }
-
-    section[data-testid="stSidebar"] div[data-baseweb="select"] > div {
-        background-color: #ffffff !important;
-        border-radius: 14px !important;
-        color: #111827 !important;
-        min-height: 46px !important;
-        padding-left: 18px !important;
-        padding-right: 12px !important;
     }
 
     section[data-testid="stSidebar"] [data-baseweb="tag"] {
@@ -492,22 +396,9 @@ st.markdown(
         margin-left: 6px !important;
     }
 
-    section[data-testid="stSidebar"] [data-testid="stCaptionContainer"] {
-        color: #dbeafe !important;
-        font-weight: 700 !important;
-        line-height: 1.5 !important;
-        margin-top: -8px !important;
-        margin-bottom: 14px !important;
-        font-size: 13px !important;
-    }
-
-    div[role="listbox"] {
+    div[role="listbox"], div[role="option"] {
         background-color: #ffffff !important;
-    }
-
-    div[role="option"] {
         color: #111827 !important;
-        background-color: #ffffff !important;
     }
 
     div[role="option"] span {
@@ -525,18 +416,6 @@ st.markdown(
         color: white;
         box-shadow: 0px 28px 70px rgba(30, 41, 59, 0.26);
         margin-bottom: 28px;
-    }
-
-    .hero-badge {
-        display: inline-block;
-        padding: 9px 16px;
-        border-radius: 999px;
-        background: rgba(255,255,255,0.14);
-        border: 1px solid rgba(255,255,255,0.22);
-        font-size: 13px;
-        font-weight: 700;
-        margin-bottom: 18px;
-        letter-spacing: 0.3px;
     }
 
     .hero-title {
@@ -561,6 +440,10 @@ st.markdown(
         line-height: 1.65;
     }
 
+    .info-card, .note-card, .table-card, .metric-card, .insight-card {
+        box-shadow: 0px 16px 38px rgba(15,23,42,0.07);
+    }
+
     .info-card {
         background: rgba(255,255,255,0.78);
         backdrop-filter: blur(16px);
@@ -569,7 +452,6 @@ st.markdown(
         padding: 19px 23px;
         color: #334155;
         font-weight: 650;
-        box-shadow: 0px 14px 34px rgba(15, 23, 42, 0.07);
         margin-bottom: 24px;
     }
 
@@ -578,7 +460,6 @@ st.markdown(
         border: 1px solid rgba(226,232,240,0.95);
         padding: 25px 24px;
         border-radius: 26px;
-        box-shadow: 0px 18px 42px rgba(15,23,42,0.08);
         text-align: left;
         min-height: 142px;
     }
@@ -624,7 +505,6 @@ st.markdown(
         font-size: 16px;
         font-weight: 700;
         line-height: 1.65;
-        box-shadow: 0px 16px 38px rgba(15,23,42,0.07);
     }
 
     .note-card {
@@ -644,7 +524,6 @@ st.markdown(
         padding: 18px;
         border-radius: 26px;
         border: 1px solid rgba(226,232,240,0.95);
-        box-shadow: 0px 18px 40px rgba(15,23,42,0.07);
     }
 
     .stButton>button {
@@ -674,14 +553,10 @@ st.markdown(
 )
 
 
+# -----------------------------
+# Sidebar inputs
+# -----------------------------
 st.sidebar.header(T["profile_input"])
-
-
-
-def show_selected(label, values):
-    if values:
-        st.sidebar.caption(f"{label}: " + ", ".join(values))
-
 
 available_cities = get_available_cities()
 available_positions = get_available_positions()
@@ -703,7 +578,6 @@ employment_label_to_value = {
     T["part_time"]: "part",
     T["project_contract"]: "project"
 }
-
 
 position_options = available_positions + [T["other"]]
 selected_position = st.sidebar.selectbox(T["position"], position_options)
@@ -764,9 +638,13 @@ else:
     final_selected_cities = selected_cities
 
 
+# -----------------------------
+# Header
+# -----------------------------
 st.markdown(
     f"""
-    <div class="hero">        <div class="hero-title">{T["title"]}</div>
+    <div class="hero">
+        <div class="hero-title">{T["title"]}</div>
         <div class="hero-company">{T["company"]}</div>
         <div class="hero-subtitle">{T["subtitle"]}</div>
     </div>
@@ -784,6 +662,9 @@ st.markdown(
 )
 
 
+# -----------------------------
+# Prediction results
+# -----------------------------
 if predict_button:
 
     with st.spinner(T["spinner"]):
@@ -933,11 +814,7 @@ if predict_button:
         texttemplate="%{text:,.0f} ₽",
         textposition="outside",
         marker_line_width=0,
-        error_y=dict(
-            thickness=1.6,
-            width=7,
-            color="#334155"
-        ),
+        error_y=dict(thickness=1.6, width=7, color="#334155"),
         hovertemplate=(
             "<b>%{x}</b><br>"
             "Predicted: %{y:,.0f} ₽<br>"
@@ -983,13 +860,7 @@ if predict_button:
         })
 
     st.markdown('<div class="table-card">', unsafe_allow_html=True)
-
-    st.dataframe(
-        results_display,
-        use_container_width=True,
-        hide_index=True
-    )
-
+    st.dataframe(results_display, use_container_width=True, hide_index=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
     csv = results_display.to_csv(index=False).encode("utf-8")
