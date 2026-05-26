@@ -119,6 +119,66 @@ TEXT = {
 
 T = TEXT[LANG]
 
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+
+def login_page():
+    st.markdown("""
+    <style>
+    .login-box {
+        max-width: 460px;
+        margin: 90px auto;
+        padding: 36px;
+        border-radius: 28px;
+        background: white;
+        box-shadow: 0 25px 70px rgba(15,23,42,0.18);
+        text-align: center;
+    }
+    .login-title {
+        font-size: 34px;
+        font-weight: 900;
+        color: #111827;
+        margin-bottom: 8px;
+    }
+    .login-subtitle {
+        color: #64748b;
+        margin-bottom: 24px;
+        font-weight: 600;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <div class="login-box">
+        <div class="login-title">Welcome to Megatonn</div>
+        <div class="login-subtitle">Sign in to access the AI Salary Prediction Platform</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    username = st.text_input("Username", placeholder="Enter your username")
+    password = st.text_input("Password", type="password", placeholder="Enter your password")
+
+    if st.button("Sign in"):
+        if username and password:
+            st.session_state.logged_in = True
+            st.rerun()
+        else:
+            st.error("Please enter username and password.")
+
+if not st.session_state.logged_in:
+    login_page()
+    st.stop()
+
+
+st.sidebar.header(T["profile_input"])
+
+if st.sidebar.button("Log out"):
+    st.session_state.logged_in = False
+    st.rerun()
+
+
+
+
 
 st.markdown(
     """
