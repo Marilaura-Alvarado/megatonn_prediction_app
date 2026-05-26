@@ -119,10 +119,8 @@ TEXT = {
 
 T = TEXT[LANG]
 
-if "logged_in" not in st.session_state:
-    st.session_state.logged_in = False
-
 def login_page():
+
     st.markdown("""
     <style>
     .login-box {
@@ -132,38 +130,70 @@ def login_page():
         border-radius: 28px;
         background: white;
         box-shadow: 0 25px 70px rgba(15,23,42,0.18);
-        text-align: center;
+        text-align:center;
     }
+
     .login-title {
-        font-size: 34px;
-        font-weight: 900;
-        color: #111827;
-        margin-bottom: 8px;
+        font-size:34px;
+        font-weight:900;
+        color:#111827;
+        margin-top:15px;
     }
-    .login-subtitle {
-        color: #64748b;
-        margin-bottom: 24px;
-        font-weight: 600;
+
+    .login-subtitle{
+        color:#64748b;
+        margin-bottom:25px;
+    }
+
+    .logo-container{
+        display:flex;
+        justify-content:center;
+        margin-bottom:10px;
     }
     </style>
     """, unsafe_allow_html=True)
 
-    st.markdown("""
-    <div class="login-box">
-        <div class="login-title">Welcome to Megatonn</div>
-        <div class="login-subtitle">Sign in to access the AI Salary Prediction Platform</div>
-    </div>
-    """, unsafe_allow_html=True)
+    with st.container():
 
-    username = st.text_input("Username", placeholder="Enter your username")
-    password = st.text_input("Password", type="password", placeholder="Enter your password")
+        col1,col2,col3=st.columns([1,2,1])
 
-    if st.button("Sign in"):
-        if username and password:
-            st.session_state.logged_in = True
-            st.rerun()
-        else:
-            st.error("Please enter username and password.")
+        with col2:
+            st.image(
+                "logo.png",   # put your image file here
+                width=170
+            )
+
+            st.markdown("""
+            <div class="login-title">
+            Welcome to Megatonn
+            </div>
+
+            <div class="login-subtitle">
+            Sign in to access the AI Salary Prediction Platform
+            </div>
+            """,unsafe_allow_html=True)
+
+            username = st.text_input(
+                "Username",
+                placeholder="Enter username"
+            )
+
+            password = st.text_input(
+                "Password",
+                type="password",
+                placeholder="Enter password"
+            )
+
+            if st.button("Sign in"):
+
+                if username and password:
+                    st.session_state.logged_in=True
+                    st.rerun()
+
+                else:
+                    st.error(
+                        "Please enter username and password"
+                    )
 
 if not st.session_state.logged_in:
     login_page()
