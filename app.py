@@ -135,92 +135,219 @@ def login_page():
 
     .stApp {
         background:
-            radial-gradient(circle at 12% 12%, rgba(99,102,241,0.12), transparent 28%),
-            radial-gradient(circle at 88% 35%, rgba(20,184,166,0.16), transparent 28%),
-            linear-gradient(135deg, #eef2ff 0%, #e0f7ff 58%, #e6fffb 100%);
+            radial-gradient(circle at 15% 15%, rgba(79,70,229,0.18), transparent 30%),
+            radial-gradient(circle at 85% 30%, rgba(20,184,166,0.18), transparent 28%),
+            radial-gradient(circle at 50% 95%, rgba(14,165,233,0.14), transparent 32%),
+            linear-gradient(135deg, #eef2ff 0%, #f8fafc 46%, #e0f7ff 100%);
     }
 
     .block-container {
-        max-width: 1080px;
-        padding-top: 5.5rem;
+        max-width: 1120px;
+        padding-top: 4.5rem;
     }
 
     section[data-testid="stSidebar"] {
         display: none;
     }
 
-    .login-logo-area {
-        width: 100%;
-        min-height: 360px;
+    .login-wrapper {
+        display: grid;
+        grid-template-columns: 0.9fr 1.1fr;
+        gap: 34px;
+        align-items: center;
+    }
+
+    .logo-panel {
+        min-height: 520px;
+        border-radius: 34px;
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: 0px;
-        background: rgba(255,255,255,0.18);
-        margin-bottom: 26px;
+        background: rgba(255,255,255,0.55);
+        border: 1px solid rgba(255,255,255,0.75);
+        box-shadow: 0 28px 80px rgba(15,23,42,0.10);
+        backdrop-filter: blur(18px);
+        position: relative;
+        overflow: hidden;
     }
 
-    .login-form-area {
-        background: rgba(224, 247, 255, 0.58);
-        border: 1px solid rgba(255,255,255,0.45);
-        box-shadow: 0px 24px 70px rgba(15, 23, 42, 0.08);
+    .logo-panel::before {
+        content: "";
+        position: absolute;
+        width: 260px;
+        height: 260px;
+        border-radius: 999px;
+        background: rgba(79,70,229,0.09);
+        top: -80px;
+        left: -70px;
+    }
+
+    .logo-panel::after {
+        content: "";
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        border-radius: 999px;
+        background: rgba(20,184,166,0.12);
+        bottom: -110px;
+        right: -110px;
+    }
+
+    .form-panel {
+        min-height: 520px;
+        border-radius: 34px;
+        padding: 44px 46px;
+        background:
+            radial-gradient(circle at top right, rgba(20,184,166,0.12), transparent 35%),
+            linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,250,252,0.90));
+        border: 1px solid rgba(226,232,240,0.9);
+        box-shadow: 0 28px 80px rgba(15,23,42,0.13);
         backdrop-filter: blur(18px);
-        padding: 26px 30px 34px 30px;
-        border-radius: 0px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .login-eyebrow {
+        display: inline-block;
+        width: fit-content;
+        padding: 8px 14px;
+        border-radius: 999px;
+        background: #eef2ff;
+        color: #4f46e5;
+        font-size: 12px;
+        font-weight: 900;
+        letter-spacing: 0.4px;
+        text-transform: uppercase;
+        margin-bottom: 18px;
+    }
+
+    .login-title {
+        font-size: 42px;
+        line-height: 1.08;
+        font-weight: 900;
+        color: #0f172a;
+        letter-spacing: -1.2px;
+        margin-bottom: 12px;
+    }
+
+    .login-subtitle {
+        color: #64748b;
+        font-size: 15px;
+        line-height: 1.65;
+        font-weight: 650;
         margin-bottom: 30px;
+        max-width: 460px;
+    }
+
+    .login-divider {
+        height: 1px;
+        background: linear-gradient(90deg, rgba(148,163,184,0.05), rgba(148,163,184,0.42), rgba(148,163,184,0.05));
+        margin: 4px 0 24px 0;
+    }
+
+    .access-note {
+        background: linear-gradient(135deg, #ecfdf5, #eef2ff);
+        border: 1px solid rgba(20,184,166,0.18);
+        color: #334155;
+        padding: 13px 16px;
+        border-radius: 18px;
+        font-size: 13px;
+        font-weight: 750;
+        margin-bottom: 22px;
+    }
+
+    div[data-testid="stTextInput"] {
+        margin-bottom: 8px;
     }
 
     div[data-testid="stTextInput"] label {
-        font-weight: 600 !important;
+        font-weight: 850 !important;
         color: #334155 !important;
         font-size: 13px !important;
     }
 
     div[data-testid="stTextInput"] input {
-        border-radius: 10px !important;
-        min-height: 42px !important;
-        background: #272832 !important;
-        color: #f8fafc !important;
-        border: 1px solid rgba(255,255,255,0.65) !important;
-        box-shadow: none !important;
-        font-weight: 700 !important;
+        border-radius: 16px !important;
+        min-height: 50px !important;
+        background: #ffffff !important;
+        color: #111827 !important;
+        border: 1px solid #cbd5e1 !important;
+        box-shadow: 0px 10px 25px rgba(15,23,42,0.05) !important;
+        font-weight: 750 !important;
+        padding-left: 16px !important;
+    }
+
+    div[data-testid="stTextInput"] input:focus {
+        border: 1px solid #4f46e5 !important;
+        box-shadow: 0px 0px 0px 4px rgba(79,70,229,0.12) !important;
     }
 
     div[data-testid="stTextInput"] input::placeholder {
-        color: #a1a1aa !important;
+        color: #94a3b8 !important;
     }
 
     .stButton>button {
-        width: auto;
-        min-width: 70px;
-        border-radius: 16px;
+        width: 100%;
+        border-radius: 18px;
         height: 56px;
-        padding-left: 14px;
-        padding-right: 14px;
-        font-weight: 850;
+        font-weight: 900;
         background: linear-gradient(135deg, #4f46e5 0%, #0f766e 100%);
         color: white;
         border: none;
-        box-shadow: 0px 12px 24px rgba(79,70,229,0.22);
-        margin-top: 10px;
+        box-shadow: 0px 18px 34px rgba(79,70,229,0.30);
+        margin-top: 14px;
+        letter-spacing: 0.2px;
     }
 
     .stButton>button:hover {
         background: linear-gradient(135deg, #4338ca 0%, #0d9488 100%);
         color: white;
         transform: translateY(-1px);
+        box-shadow: 0px 22px 42px rgba(79,70,229,0.36);
+    }
+
+    .security-note {
+        text-align: center;
+        color: #94a3b8;
+        font-size: 12px;
+        font-weight: 700;
+        margin-top: 18px;
+    }
+
+    @media (max-width: 900px) {
+        .login-wrapper {
+            grid-template-columns: 1fr;
+        }
+        .logo-panel {
+            min-height: 280px;
+        }
+        .form-panel {
+            min-height: auto;
+        }
     }
     </style>
     """, unsafe_allow_html=True)
 
-    st.markdown('<div class="login-logo-area">', unsafe_allow_html=True)
+    st.markdown('<div class="login-wrapper">', unsafe_allow_html=True)
+
+    st.markdown('<div class="logo-panel">', unsafe_allow_html=True)
     if os.path.exists("logo.png"):
-        st.image("logo.png", width=170)
+        st.image("logo.png", width=210)
     else:
         st.markdown("### Megatonn")
     st.markdown('</div>', unsafe_allow_html=True)
 
-    st.markdown('<div class="login-form-area">', unsafe_allow_html=True)
+    st.markdown('''
+        <div class="form-panel">
+            <div class="login-eyebrow">Secure access</div>
+            <div class="login-title">Welcome back</div>
+            <div class="login-subtitle">
+                Sign in to open the Megatonn AI Salary Prediction Platform and compare salary forecasts by city.
+            </div>
+            <div class="login-divider"></div>
+            <div class="access-note">Demo credentials: <b>Admin</b> / <b>admin</b></div>
+    ''', unsafe_allow_html=True)
 
     username = st.text_input("Username", value="Admin", placeholder="Admin")
     password = st.text_input("Password", value="admin", type="password", placeholder="admin")
@@ -233,7 +360,7 @@ def login_page():
         else:
             st.error("Incorrect username or password. Please use Admin / admin.")
 
-    st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('<div class="security-note">Protected analytical workspace</div></div></div>', unsafe_allow_html=True)
 
 
 if not st.session_state.logged_in:
