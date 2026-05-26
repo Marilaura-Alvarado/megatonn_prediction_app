@@ -54,32 +54,32 @@ def login_page():
         }
 
         .block-container {
-            max-width: 480px;
-            padding-top: 6rem;
+            max-width: 440px;
+            padding-top: 5.5rem;
         }
 
         .login-card {
-            background: rgba(255, 255, 255, 0.92);
-            border: 1px solid rgba(226, 232, 240, 0.95);
-            border-radius: 28px;
-            padding: 42px 38px 36px 38px;
-            box-shadow: 0 24px 70px rgba(15, 23, 42, 0.11);
-            backdrop-filter: blur(16px);
+            background: rgba(255, 255, 255, 0.96);
+            border: 1px solid rgba(226, 232, 240, 0.9);
+            border-radius: 30px;
+            padding: 40px 36px 34px 36px;
+            box-shadow: 0 26px 65px rgba(15, 23, 42, 0.10);
+            backdrop-filter: blur(18px);
         }
 
         .logo-area {
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
 
         .login-title {
             text-align: center;
-            font-size: 30px;
+            font-size: 32px;
             font-weight: 900;
             color: #0f172a;
-            letter-spacing: -0.8px;
+            letter-spacing: -0.9px;
             margin-bottom: 8px;
         }
 
@@ -87,21 +87,21 @@ def login_page():
             text-align: center;
             color: #64748b;
             font-size: 14px;
-            font-weight: 600;
-            line-height: 1.6;
-            margin-bottom: 28px;
+            font-weight: 650;
+            line-height: 1.55;
+            margin-bottom: 26px;
         }
 
         .demo-access {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
+            background: linear-gradient(135deg, #eef2ff 0%, #ecfeff 100%);
+            border: 1px solid rgba(79, 70, 229, 0.12);
             color: #475569;
-            padding: 12px 14px;
+            padding: 11px 14px;
             border-radius: 16px;
             text-align: center;
             font-size: 13px;
-            font-weight: 700;
-            margin-bottom: 22px;
+            font-weight: 750;
+            margin-bottom: 24px;
         }
 
         div[data-testid="stTextInput"] label {
@@ -111,12 +111,12 @@ def login_page():
         }
 
         div[data-testid="stTextInput"] input {
-            min-height: 48px !important;
-            border-radius: 14px !important;
+            min-height: 50px !important;
+            border-radius: 15px !important;
             background: #ffffff !important;
             color: #111827 !important;
-            border: 1px solid #cbd5e1 !important;
-            box-shadow: none !important;
+            border: 1px solid #d7dee8 !important;
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.035) !important;
             font-weight: 650 !important;
         }
 
@@ -127,14 +127,15 @@ def login_page():
 
         .stButton > button {
             width: 100%;
-            height: 50px;
-            border-radius: 14px;
+            height: 52px;
+            border-radius: 15px;
             background: linear-gradient(135deg, #4f46e5 0%, #0f766e 100%);
             color: white;
             border: none;
-            font-weight: 850;
-            box-shadow: 0 12px 28px rgba(79, 70, 229, 0.24);
-            margin-top: 10px;
+            font-weight: 900;
+            box-shadow: 0 14px 30px rgba(79, 70, 229, 0.25);
+            margin-top: 12px;
+            letter-spacing: 0.2px;
         }
 
         .stButton > button:hover {
@@ -159,7 +160,7 @@ def login_page():
 
     st.markdown('<div class="logo-area">', unsafe_allow_html=True)
     if os.path.exists("logo.png"):
-        st.image("logo.png", width=135)
+        st.image("logo.png", width=125)
     else:
         st.markdown("### Megatonn")
     st.markdown('</div>', unsafe_allow_html=True)
@@ -167,7 +168,7 @@ def login_page():
     st.markdown(
         """
         <div class="login-title">Welcome back</div>
-        <div class="login-subtitle">Sign in to access the AI Salary Prediction Platform.</div>
+        <div class="login-subtitle">Access your salary prediction dashboard.</div>
         <div class="demo-access">Username: <b>Admin</b> &nbsp; Password: <b>admin</b></div>
         """,
         unsafe_allow_html=True
@@ -184,7 +185,7 @@ def login_page():
         else:
             st.error("Incorrect username or password.")
 
-    st.markdown('<div class="login-footer">Megatonn Analytics</div>', unsafe_allow_html=True)
+    st.markdown('<div class="login-footer">AI Salary Prediction Platform</div>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
 
@@ -882,3 +883,4 @@ else:
         """,
         unsafe_allow_html=True
     )
+
