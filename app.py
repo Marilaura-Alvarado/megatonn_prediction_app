@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 import plotly.express as px
 
@@ -119,95 +120,139 @@ TEXT = {
 
 T = TEXT[LANG]
 
-def login_page():
 
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+
+def login_page():
     st.markdown("""
     <style>
-    .login-box {
-        max-width: 460px;
-        margin: 90px auto;
-        padding: 36px;
-        border-radius: 28px;
-        background: white;
-        box-shadow: 0 25px 70px rgba(15,23,42,0.18);
-        text-align:center;
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+    html, body, [class*="css"] {
+        font-family: 'Inter', sans-serif;
+    }
+
+    .stApp {
+        background:
+            radial-gradient(circle at top left, rgba(99,102,241,0.22), transparent 30%),
+            radial-gradient(circle at bottom right, rgba(20,184,166,0.18), transparent 32%),
+            linear-gradient(135deg, #f8fafc 0%, #eef2ff 50%, #f8fafc 100%);
+    }
+
+    .block-container {
+        max-width: 620px;
+        padding-top: 5rem;
+    }
+
+    section[data-testid="stSidebar"] {
+        display: none;
+    }
+
+    .login-card {
+        background: rgba(255,255,255,0.92);
+        border: 1px solid rgba(226,232,240,0.95);
+        border-radius: 34px;
+        padding: 40px 42px 34px 42px;
+        box-shadow: 0px 28px 70px rgba(15,23,42,0.16);
+        text-align: center;
+        backdrop-filter: blur(16px);
+    }
+
+    .login-logo {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 14px;
     }
 
     .login-title {
-        font-size:34px;
-        font-weight:900;
-        color:#111827;
-        margin-top:15px;
+        font-size: 34px;
+        font-weight: 900;
+        color: #111827;
+        letter-spacing: -0.8px;
+        margin-bottom: 8px;
     }
 
-    .login-subtitle{
-        color:#64748b;
-        margin-bottom:25px;
+    .login-subtitle {
+        color: #64748b;
+        margin-bottom: 26px;
+        font-weight: 650;
+        line-height: 1.5;
     }
 
-    .logo-container{
-        display:flex;
-        justify-content:center;
-        margin-bottom:10px;
+    .login-note {
+        margin-top: 18px;
+        color: #94a3b8;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    div[data-testid="stTextInput"] label {
+        font-weight: 800 !important;
+        color: #334155 !important;
+    }
+
+    div[data-testid="stTextInput"] input {
+        border-radius: 16px !important;
+        min-height: 48px !important;
+    }
+
+    .stButton>button {
+        width: 100%;
+        border-radius: 18px;
+        height: 54px;
+        font-weight: 850;
+        background: linear-gradient(135deg, #4f46e5 0%, #0f766e 100%);
+        color: white;
+        border: none;
+        box-shadow: 0px 14px 28px rgba(79,70,229,0.32);
+        margin-top: 10px;
+    }
+
+    .stButton>button:hover {
+        background: linear-gradient(135deg, #4338ca 0%, #0d9488 100%);
+        color: white;
+        transform: translateY(-1px);
     }
     </style>
     """, unsafe_allow_html=True)
 
-    with st.container():
+    st.markdown('<div class="login-card">', unsafe_allow_html=True)
 
-        col1,col2,col3=st.columns([1,2,1])
+    st.markdown('<div class="login-logo">', unsafe_allow_html=True)
+    if os.path.exists("logo.png"):
+        st.image("logo.png", width=165)
+    else:
+        st.markdown("### Megatonn")
+        st.caption("Place your transparent logo file as logo.png in the same folder as app.py")
+    st.markdown('</div>', unsafe_allow_html=True)
 
-        with col2:
-            st.image(
-                "logo.png",   # put your image file here
-                width=170
-            )
-
-            st.markdown("""
-            <div class="login-title">
-            Welcome to Megatonn
-            </div>
-
-            <div class="login-subtitle">
+    st.markdown("""
+        <div class="login-title">Welcome to Megatonn</div>
+        <div class="login-subtitle">
             Sign in to access the AI Salary Prediction Platform
-            </div>
-            """,unsafe_allow_html=True)
+        </div>
+    """, unsafe_allow_html=True)
 
-            username = st.text_input(
-                "Username",
-                placeholder="Enter username"
-            )
+    username = st.text_input("Username", placeholder="Enter your username")
+    password = st.text_input("Password", type="password", placeholder="Enter your password")
 
-            password = st.text_input(
-                "Password",
-                type="password",
-                placeholder="Enter password"
-            )
+    if st.button("Sign in"):
+        if username and password:
+            st.session_state.logged_in = True
+            st.session_state.username = username
+            st.rerun()
+        else:
+            st.error("Please enter username and password.")
 
-            if st.button("Sign in"):
+    st.markdown('<div class="login-note">Demo login: any username and password will open the app.</div>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
-                if username and password:
-                    st.session_state.logged_in=True
-                    st.rerun()
-
-                else:
-                    st.error(
-                        "Please enter username and password"
-                    )
 
 if not st.session_state.logged_in:
     login_page()
     st.stop()
-
-
-st.sidebar.header(T["profile_input"])
-
-if st.sidebar.button("Log out"):
-    st.session_state.logged_in = False
-    st.rerun()
-
-
-
 
 
 st.markdown(
@@ -276,58 +321,49 @@ st.markdown(
         color: #111827 !important;
     }
 
-/* Make all select containers stop clipping content */
-section[data-testid="stSidebar"] div[data-baseweb="select"],
-section[data-testid="stSidebar"] div[data-baseweb="select"] * {
-    overflow: visible !important;
-}
+    section[data-testid="stSidebar"] div[data-baseweb="select"],
+    section[data-testid="stSidebar"] div[data-baseweb="select"] * {
+        overflow: visible !important;
+    }
 
-/* Main select input box */
-section[data-testid="stSidebar"] div[data-baseweb="select"] > div {
-    background-color: #ffffff !important;
-    border-radius: 14px !important;
-    color: #111827 !important;
-    min-height: 46px !important;
-    padding-left: 18px !important;
-    padding-right: 12px !important;
-}
+    section[data-testid="stSidebar"] div[data-baseweb="select"] > div {
+        background-color: #ffffff !important;
+        border-radius: 14px !important;
+        color: #111827 !important;
+        min-height: 46px !important;
+        padding-left: 18px !important;
+        padding-right: 12px !important;
+    }
 
-/* Selected tags */
-section[data-testid="stSidebar"] [data-baseweb="tag"] {
-    background-color: #e0f2fe !important;
-    border: 1px solid #60a5fa !important;
-    border-radius: 999px !important;
-    color: #0f172a !important;
+    section[data-testid="stSidebar"] [data-baseweb="tag"] {
+        background-color: #e0f2fe !important;
+        border: 1px solid #60a5fa !important;
+        border-radius: 999px !important;
+        color: #0f172a !important;
+        margin-left: 12px !important;
+        padding-left: 14px !important;
+        padding-right: 8px !important;
+        max-width: 245px !important;
+        min-width: fit-content !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        transform: translateX(8px) !important;
+    }
 
-    margin-left: 12px !important;
-    padding-left: 14px !important;
-    padding-right: 8px !important;
+    section[data-testid="stSidebar"] [data-baseweb="tag"] span,
+    section[data-testid="stSidebar"] [data-baseweb="tag"] div {
+        color: #0f172a !important;
+        font-weight: 800 !important;
+        white-space: nowrap !important;
+        overflow: visible !important;
+        text-overflow: clip !important;
+    }
 
-    max-width: 245px !important;
-    min-width: fit-content !important;
-
-    display: inline-flex !important;
-    align-items: center !important;
-
-    transform: translateX(8px) !important;
-}
-
-/* Tag text */
-section[data-testid="stSidebar"] [data-baseweb="tag"] span,
-section[data-testid="stSidebar"] [data-baseweb="tag"] div {
-    color: #0f172a !important;
-    font-weight: 800 !important;
-    white-space: nowrap !important;
-    overflow: visible !important;
-    text-overflow: clip !important;
-}
-
-/* X icon */
-section[data-testid="stSidebar"] [data-baseweb="tag"] svg {
-    fill: #0f172a !important;
-    color: #0f172a !important;
-    margin-left: 6px !important;
-}
+    section[data-testid="stSidebar"] [data-baseweb="tag"] svg {
+        fill: #0f172a !important;
+        color: #0f172a !important;
+        margin-left: 6px !important;
+    }
 
     section[data-testid="stSidebar"] [data-testid="stCaptionContainer"] {
         color: #dbeafe !important;
@@ -511,6 +547,16 @@ section[data-testid="stSidebar"] [data-baseweb="tag"] svg {
 )
 
 
+st.sidebar.header(T["profile_input"])
+
+if st.sidebar.button("Log out"):
+    st.session_state.logged_in = False
+    st.rerun()
+
+if "username" in st.session_state:
+    st.sidebar.caption(f"Logged in as: {st.session_state.username}")
+
+
 def show_selected(label, values):
     if values:
         st.sidebar.caption(f"{label}: " + ", ".join(values))
@@ -537,8 +583,6 @@ employment_label_to_value = {
     T["project_contract"]: "project"
 }
 
-
-st.sidebar.header(T["profile_input"])
 
 position_options = available_positions + [T["other"]]
 selected_position = st.sidebar.selectbox(T["position"], position_options)
@@ -577,13 +621,11 @@ selected_hard_skills = st.sidebar.multiselect(
     placeholder=T["hard_skills"]
 )
 
-
 selected_soft_skills = st.sidebar.multiselect(
     T["soft_skills"],
     soft_skill_options,
     placeholder=T["soft_skills"]
 )
-
 
 city_options = [T["all_cities"]] + available_cities
 selected_cities = st.sidebar.multiselect(
@@ -592,7 +634,6 @@ selected_cities = st.sidebar.multiselect(
     default=[T["all_cities"]],
     placeholder=T["cities"]
 )
-
 
 predict_button = st.sidebar.button(T["predict"])
 
