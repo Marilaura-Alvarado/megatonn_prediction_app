@@ -29,6 +29,17 @@ if "logged_in" not in st.session_state:
 
 
 def login_page():
+    app_dir = os.path.dirname(__file__)
+    possible_logo_files = ["logo.png", "Logo.png", "LOGO.png"]
+    logo_path = next(
+        (
+            os.path.join(app_dir, file_name)
+            for file_name in possible_logo_files
+            if os.path.exists(os.path.join(app_dir, file_name))
+        ),
+        None
+    )
+
     st.markdown(
         """
         <style>
@@ -40,10 +51,10 @@ def login_page():
 
         .stApp {
             background:
-                radial-gradient(circle at 12% 15%, rgba(124, 58, 237, 0.10), transparent 28%),
-                radial-gradient(circle at 85% 18%, rgba(37, 99, 235, 0.10), transparent 30%),
-                radial-gradient(circle at 18% 80%, rgba(15, 118, 110, 0.08), transparent 30%),
-                linear-gradient(135deg, #f8fbff 0%, #f3f6ff 45%, #f8fbff 100%);
+                radial-gradient(circle at 15% 18%, rgba(124, 58, 237, 0.10), transparent 30%),
+                radial-gradient(circle at 85% 20%, rgba(37, 99, 235, 0.10), transparent 32%),
+                radial-gradient(circle at 15% 85%, rgba(15, 118, 110, 0.08), transparent 30%),
+                linear-gradient(135deg, #f8fbff 0%, #f3f6ff 48%, #f8fbff 100%);
         }
 
         .stApp::before {
@@ -52,10 +63,10 @@ def login_page():
             inset: 0;
             pointer-events: none;
             background-image:
-                linear-gradient(rgba(99,102,241,0.045) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(99,102,241,0.045) 1px, transparent 1px);
+                linear-gradient(rgba(99,102,241,0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(99,102,241,0.04) 1px, transparent 1px);
             background-size: 42px 42px;
-            mask-image: radial-gradient(circle at 82% 8%, black 0%, transparent 35%);
+            mask-image: radial-gradient(circle at 85% 8%, black 0%, transparent 38%);
         }
 
         header[data-testid="stHeader"] {
@@ -72,20 +83,18 @@ def login_page():
             padding-bottom: 3.5rem;
         }
 
-        .login-card {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.94);
-            border: 1px solid rgba(226, 232, 240, 0.95);
+        div[data-testid="stForm"] {
+            background: rgba(255,255,255,0.96);
+            border: 1px solid rgba(226,232,240,0.95);
             border-radius: 32px;
             padding: 48px 56px 46px 56px;
-            box-shadow: 0 30px 90px rgba(15, 23, 42, 0.12);
+            box-shadow: 0 30px 90px rgba(15,23,42,0.12);
             backdrop-filter: blur(18px);
         }
 
-        .logo-area {
+        div[data-testid="stImage"] {
             display: flex;
             justify-content: center;
-            align-items: center;
             margin-bottom: 28px;
         }
 
@@ -125,10 +134,6 @@ def login_page():
             box-shadow: 0 0 0 6px rgba(124,58,237,0.10);
         }
 
-        .login-field-spacer {
-            height: 6px;
-        }
-
         div[data-testid="stTextInput"] {
             margin-bottom: 18px;
         }
@@ -146,7 +151,7 @@ def login_page():
             background: rgba(255,255,255,0.96) !important;
             color: #111827 !important;
             border: 1px solid #d8def0 !important;
-            box-shadow: 0 12px 26px rgba(15, 23, 42, 0.035) !important;
+            box-shadow: 0 12px 26px rgba(15,23,42,0.035) !important;
             font-weight: 700 !important;
             font-size: 16px !important;
             padding-left: 18px !important;
@@ -154,7 +159,7 @@ def login_page():
 
         div[data-testid="stTextInput"] input:focus {
             border-color: #8b5cf6 !important;
-            box-shadow: 0 0 0 4px rgba(139,92,246,0.13), 0 12px 26px rgba(15, 23, 42, 0.04) !important;
+            box-shadow: 0 0 0 4px rgba(139,92,246,0.13), 0 12px 26px rgba(15,23,42,0.04) !important;
         }
 
         div[data-testid="stTextInput"] input::placeholder {
@@ -171,7 +176,7 @@ def login_page():
             font-size: 18px;
             font-weight: 850;
             letter-spacing: 0.2px;
-            box-shadow: 0 18px 36px rgba(37, 99, 235, 0.26);
+            box-shadow: 0 18px 36px rgba(37,99,235,0.26);
             margin-top: 14px;
         }
 
@@ -179,7 +184,7 @@ def login_page():
             background: linear-gradient(135deg, #6d28d9 0%, #1d4ed8 100%);
             color: white;
             transform: translateY(-1px);
-            box-shadow: 0 22px 44px rgba(37, 99, 235, 0.32);
+            box-shadow: 0 22px 44px rgba(37,99,235,0.32);
         }
 
         .login-footer {
@@ -210,7 +215,7 @@ def login_page():
                 max-width: 92vw;
                 padding-top: 2.5rem;
             }
-            .login-card {
+            div[data-testid="stForm"] {
                 padding: 34px 24px 32px 24px;
                 border-radius: 26px;
             }
@@ -227,40 +232,38 @@ def login_page():
         unsafe_allow_html=True
     )
 
-    st.markdown('<div class="login-card">', unsafe_allow_html=True)
+    with st.form("login_form", clear_on_submit=False):
+        if logo_path:
+            st.image(logo_path, width=155)
+        else:
+            st.error("Logo file was not found. Save it as logo.png or Logo.png in the same folder as app.py.")
 
-    st.markdown('<div class="logo-area">', unsafe_allow_html=True)
-    if os.path.exists("logo.png"):
-        st.image("logo.png", width=155)
-    else:
-        st.markdown("### Megatonn")
-    st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown(
+            """
+            <div class="login-title">Welcome back</div>
+            <div class="title-divider">
+                <div class="line"></div>
+                <div class="dot"></div>
+                <div class="line right"></div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
-    st.markdown(
-        """
-        <div class="login-title">Welcome back</div>
-        <div class="title-divider">
-            <div class="line"></div>
-            <div class="dot"></div>
-            <div class="line right"></div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+        username = st.text_input("Username", value="Admin", placeholder="Admin")
+        password = st.text_input("Password", value="admin", type="password", placeholder="admin")
 
-    username = st.text_input("Username", value="Admin", placeholder="Admin")
-    password = st.text_input("Password", value="admin", type="password", placeholder="admin")
+        submitted = st.form_submit_button("Sign in  →")
 
-    if st.button("Sign in  →"):
+        st.markdown('<div class="login-footer">AI Salary Prediction Platform</div>', unsafe_allow_html=True)
+
+    if submitted:
         if username == "Admin" and password == "admin":
             st.session_state.logged_in = True
             st.session_state.username = username
             st.rerun()
         else:
             st.error("Incorrect username or password.")
-
-    st.markdown('<div class="login-footer">AI Salary Prediction Platform</div>', unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
 
 
 if not st.session_state.logged_in:
