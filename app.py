@@ -51,9 +51,9 @@ def login_page():
 
         .stApp {
             background:
-                radial-gradient(circle at 15% 18%, rgba(124, 58, 237, 0.10), transparent 30%),
-                radial-gradient(circle at 85% 20%, rgba(37, 99, 235, 0.10), transparent 32%),
-                radial-gradient(circle at 15% 85%, rgba(15, 118, 110, 0.08), transparent 30%),
+                radial-gradient(circle at 18% 15%, rgba(124, 58, 237, 0.10), transparent 30%),
+                radial-gradient(circle at 86% 18%, rgba(37, 99, 235, 0.10), transparent 32%),
+                radial-gradient(circle at 16% 86%, rgba(15, 118, 110, 0.08), transparent 30%),
                 linear-gradient(135deg, #f8fbff 0%, #f3f6ff 48%, #f8fbff 100%);
         }
 
@@ -66,7 +66,7 @@ def login_page():
                 linear-gradient(rgba(99,102,241,0.04) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(99,102,241,0.04) 1px, transparent 1px);
             background-size: 42px 42px;
-            mask-image: radial-gradient(circle at 85% 8%, black 0%, transparent 38%);
+            mask-image: radial-gradient(circle at 86% 7%, black 0%, transparent 38%);
         }
 
         header[data-testid="stHeader"] {
@@ -78,24 +78,37 @@ def login_page():
         }
 
         .block-container {
-            max-width: 760px;
-            padding-top: 4.6rem;
+            max-width: 820px;
+            padding-top: 4.4rem;
             padding-bottom: 3.5rem;
         }
 
         div[data-testid="stForm"] {
+            max-width: 720px;
+            margin: 0 auto;
             background: rgba(255,255,255,0.96);
             border: 1px solid rgba(226,232,240,0.95);
             border-radius: 32px;
-            padding: 48px 56px 46px 56px;
+            padding: 48px 70px 48px 70px;
             box-shadow: 0 30px 90px rgba(15,23,42,0.12);
             backdrop-filter: blur(18px);
+        }
+
+        div[data-testid="stForm"] [data-testid="column"] {
+            display: flex;
+            justify-content: center;
         }
 
         div[data-testid="stImage"] {
             display: flex;
             justify-content: center;
-            margin-bottom: 28px;
+            margin-bottom: 30px;
+        }
+
+        div[data-testid="stImage"] img {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .login-title {
@@ -105,6 +118,7 @@ def login_page():
             font-weight: 900;
             color: #111827;
             letter-spacing: -1.1px;
+            margin-top: 4px;
             margin-bottom: 18px;
         }
 
@@ -135,20 +149,20 @@ def login_page():
         }
 
         div[data-testid="stTextInput"] {
-            margin-bottom: 18px;
+            margin-bottom: 22px;
         }
 
         div[data-testid="stTextInput"] label {
             color: #334155 !important;
             font-size: 15px !important;
             font-weight: 750 !important;
-            padding-bottom: 7px !important;
+            padding-bottom: 8px !important;
         }
 
         div[data-testid="stTextInput"] input {
             min-height: 58px !important;
             border-radius: 14px !important;
-            background: rgba(255,255,255,0.96) !important;
+            background: rgba(255,255,255,0.98) !important;
             color: #111827 !important;
             border: 1px solid #d8def0 !important;
             box-shadow: 0 12px 26px rgba(15,23,42,0.035) !important;
@@ -166,7 +180,22 @@ def login_page():
             color: #94a3b8 !important;
         }
 
-        .stButton > button {
+        div[data-baseweb="input"] {
+            border-radius: 14px !important;
+            background: transparent !important;
+        }
+
+        div[data-baseweb="input"] > div {
+            background: transparent !important;
+            border-radius: 14px !important;
+        }
+
+        div[data-baseweb="input"] svg {
+            color: #475569 !important;
+            fill: #475569 !important;
+        }
+
+        div[data-testid="stFormSubmitButton"] button {
             width: 100%;
             height: 62px;
             border-radius: 14px;
@@ -177,10 +206,10 @@ def login_page():
             font-weight: 850;
             letter-spacing: 0.2px;
             box-shadow: 0 18px 36px rgba(37,99,235,0.26);
-            margin-top: 14px;
+            margin-top: 8px;
         }
 
-        .stButton > button:hover {
+        div[data-testid="stFormSubmitButton"] button:hover {
             background: linear-gradient(135deg, #6d28d9 0%, #1d4ed8 100%);
             color: white;
             transform: translateY(-1px);
@@ -195,7 +224,7 @@ def login_page():
             color: #64748b;
             font-size: 14px;
             font-weight: 750;
-            margin-top: 36px;
+            margin-top: 42px;
         }
 
         .login-footer::before,
@@ -233,10 +262,12 @@ def login_page():
     )
 
     with st.form("login_form", clear_on_submit=False):
-        if logo_path:
-            st.image(logo_path, width=155)
-        else:
-            st.error("Logo file was not found. Save it as logo.png or Logo.png in the same folder as app.py.")
+        logo_left, logo_center, logo_right = st.columns([1, 1, 1])
+        with logo_center:
+            if logo_path:
+                st.image(logo_path, width=155)
+            else:
+                st.error("Logo file was not found. Save it as logo.png or Logo.png in the same folder as app.py.")
 
         st.markdown(
             """
