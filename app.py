@@ -389,7 +389,7 @@ TEXT = {
         "project_contract": "Project contract",
         "range": "Range",
         "resume_salary_estimator": "Resume-Based Salary Estimator",
-        "resume_salary_text": "Enter resume-based profile information and compare the estimated salary range across cities.",
+        "resume_salary_text": "",
         "feedback_title": "Developer Feedback",
         "feedback_intro": "Send feedback, bugs, or suggestions directly from the prototype interface.",
         "feedback_placeholder": "Write feedback for the developers...",
