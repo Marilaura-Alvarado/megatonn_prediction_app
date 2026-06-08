@@ -388,13 +388,14 @@ TEXT = {
         "resume_salary_estimator": "Resume Salary Estimator",
         "resume_salary_text": "Enter resume-based profile information and compare the estimated salary range across cities.",
         "developer_feedback": "Developer Feedback",
-        "developer_feedback_text": "Use the feedback chatbot at the bottom of the page to send bugs, comments, or improvement ideas.",
-        "feedback_title": "Developer Feedback Chatbot",
+        "developer_feedback_text": "Use the floating chat bubble in the bottom-right corner to send bugs, comments, or improvement ideas.",
+        "feedback_title": "Developer Feedback",
         "feedback_intro": "Send feedback, bugs, or suggestions directly from the prototype interface.",
         "feedback_placeholder": "Write feedback for the developers...",
         "feedback_welcome": "Hello! Send your feedback here. I will save it for the development team.",
         "feedback_ack": "Thank you! Your feedback was saved for the developers.",
-        "download_feedback": "Download feedback log"
+        "download_feedback": "Download feedback log",
+        "send_feedback": "Send feedback"
     },
     "Русский": {
         "title": "AI-платформа прогнозирования зарплат",
@@ -443,13 +444,14 @@ TEXT = {
         "resume_salary_estimator": "Resume Salary Estimator",
         "resume_salary_text": "Введите данные профиля на основе резюме и сравните расчетный диапазон зарплаты по городам.",
         "developer_feedback": "Обратная связь разработчикам",
-        "developer_feedback_text": "Используйте чат-бот внизу страницы, чтобы отправить ошибки, комментарии или идеи по улучшению.",
-        "feedback_title": "Чат-бот обратной связи",
+        "developer_feedback_text": "Используйте плавающий чат в правом нижнем углу, чтобы отправить ошибки, комментарии или идеи по улучшению.",
+        "feedback_title": "Обратная связь",
         "feedback_intro": "Отправьте комментарии, ошибки или предложения прямо из интерфейса прототипа.",
         "feedback_placeholder": "Напишите обратную связь для разработчиков...",
         "feedback_welcome": "Здравствуйте! Напишите обратную связь здесь. Я сохраню ее для команды разработки.",
         "feedback_ack": "Спасибо! Ваше сообщение сохранено для разработчиков.",
-        "download_feedback": "Скачать журнал обратной связи"
+        "download_feedback": "Скачать журнал обратной связи",
+        "send_feedback": "Отправить"
     }
 }
 
@@ -708,6 +710,65 @@ st.markdown(
     div[data-testid="stDataFrame"] {
         border-radius: 18px;
         overflow: hidden;
+    }
+
+    /* Floating feedback bubble */
+    div[data-testid="stPopover"] {
+        position: fixed !important;
+        right: 28px !important;
+        bottom: 28px !important;
+        z-index: 999999 !important;
+    }
+
+    div[data-testid="stPopover"] > button {
+        width: 66px !important;
+        height: 66px !important;
+        border-radius: 999px !important;
+        padding: 0 !important;
+        background: linear-gradient(135deg, #4f46e5 0%, #0f766e 100%) !important;
+        color: white !important;
+        border: 1px solid rgba(255,255,255,0.45) !important;
+        box-shadow: 0 18px 42px rgba(15,23,42,0.32) !important;
+        font-size: 28px !important;
+        font-weight: 900 !important;
+    }
+
+    div[data-testid="stPopover"] > button:hover {
+        transform: translateY(-3px) scale(1.03);
+        box-shadow: 0 22px 52px rgba(15,23,42,0.40) !important;
+        background: linear-gradient(135deg, #4338ca 0%, #0d9488 100%) !important;
+        color: white !important;
+    }
+
+    .feedback-message-assistant {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        color: #334155;
+        padding: 10px 12px;
+        border-radius: 15px 15px 15px 4px;
+        font-size: 13px;
+        line-height: 1.45;
+        margin-bottom: 9px;
+        font-weight: 600;
+    }
+
+    .feedback-message-user {
+        background: linear-gradient(135deg, #4f46e5 0%, #0f766e 100%);
+        color: white;
+        padding: 10px 12px;
+        border-radius: 15px 15px 4px 15px;
+        font-size: 13px;
+        line-height: 1.45;
+        margin-bottom: 9px;
+        font-weight: 600;
+    }
+
+    .feedback-small-note {
+        color: #64748b;
+        font-size: 12px;
+        line-height: 1.45;
+        margin-bottom: 10px;
+        font-weight: 600;
     }
     </style>
     """,
@@ -1074,48 +1135,97 @@ else:
 
 
 # -----------------------------
-# Developer feedback chatbot
+# Floating developer feedback chatbot
 # -----------------------------
-st.markdown(f'<div class="section-title">{T["feedback_title"]}</div>', unsafe_allow_html=True)
-
-st.markdown(
-    f"""
-    <div class="note-card">
-        {T["feedback_intro"]}
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-
 if len(st.session_state.feedback_messages) == 0:
     st.session_state.feedback_messages.append(
         {"role": "assistant", "content": T["feedback_welcome"]}
     )
 
-for message in st.session_state.feedback_messages:
-    with st.chat_message(message["role"]):
-        st.write(message["content"])
-
-feedback_prompt = st.chat_input(T["feedback_placeholder"])
-
-if feedback_prompt:
-    st.session_state.feedback_messages.append(
-        {"role": "user", "content": feedback_prompt}
-    )
-
-    save_developer_feedback(feedback_prompt)
-
-    st.session_state.feedback_messages.append(
-        {"role": "assistant", "content": T["feedback_ack"]}
-    )
-
-    st.rerun()
-
-if os.path.exists(FEEDBACK_FILE):
-    with open(FEEDBACK_FILE, "rb") as feedback_file:
-        st.download_button(
-            label=T["download_feedback"],
-            data=feedback_file,
-            file_name="developer_feedback.csv",
-            mime="text/csv"
+if hasattr(st, "popover"):
+    with st.popover("💬", use_container_width=False):
+        st.markdown(f"### {T['feedback_title']}")
+        st.markdown(
+            f"""
+            <div class="feedback-small-note">
+                {T["feedback_intro"]}
+            </div>
+            """,
+            unsafe_allow_html=True
         )
+
+        for message in st.session_state.feedback_messages[-6:]:
+            css_class = "feedback-message-user" if message["role"] == "user" else "feedback-message-assistant"
+            st.markdown(
+                f"""
+                <div class="{css_class}">
+                    {message["content"]}
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+        with st.form("floating_feedback_form", clear_on_submit=True):
+            feedback_prompt = st.text_area(
+                label=T["feedback_placeholder"],
+                placeholder=T["feedback_placeholder"],
+                height=110,
+                label_visibility="collapsed"
+            )
+
+            submitted_feedback = st.form_submit_button(T["send_feedback"])
+
+        if submitted_feedback:
+            if feedback_prompt.strip():
+                st.session_state.feedback_messages.append(
+                    {"role": "user", "content": feedback_prompt.strip()}
+                )
+
+                save_developer_feedback(feedback_prompt.strip())
+
+                st.session_state.feedback_messages.append(
+                    {"role": "assistant", "content": T["feedback_ack"]}
+                )
+
+                st.rerun()
+            else:
+                st.warning(T["feedback_placeholder"])
+
+        if os.path.exists(FEEDBACK_FILE):
+            with open(FEEDBACK_FILE, "rb") as feedback_file:
+                st.download_button(
+                    label=T["download_feedback"],
+                    data=feedback_file,
+                    file_name="developer_feedback.csv",
+                    mime="text/csv"
+                )
+
+else:
+    st.markdown(f'<div class="section-title">{T["feedback_title"]}</div>', unsafe_allow_html=True)
+    st.markdown(
+        f"""
+        <div class="note-card">
+            {T["feedback_intro"]}
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    for message in st.session_state.feedback_messages:
+        with st.chat_message(message["role"]):
+            st.write(message["content"])
+
+    feedback_prompt = st.chat_input(T["feedback_placeholder"])
+
+    if feedback_prompt:
+        st.session_state.feedback_messages.append(
+            {"role": "user", "content": feedback_prompt}
+        )
+
+        save_developer_feedback(feedback_prompt)
+
+        st.session_state.feedback_messages.append(
+            {"role": "assistant", "content": T["feedback_ack"]}
+        )
+
+        st.rerun()
