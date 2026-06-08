@@ -389,7 +389,6 @@ TEXT = {
         "project_contract": "Project contract",
         "range": "Range",
         "feedback_title": "Developer Feedback",
-        "feedback_intro": "Send feedback, bugs, or suggestions directly from the prototype interface.",
         "feedback_placeholder": "Write feedback for the developers...",
         "feedback_welcome": "Hello! Send your feedback here. I will save it for the development team.",
         "feedback_ack": "Thank you! Your feedback was saved for the developers.",
