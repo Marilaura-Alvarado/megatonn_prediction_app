@@ -1127,17 +1127,17 @@ if predict_button:
         font=dict(family="Inter", size=14, color="#334155"),
         title=dict(font=dict(size=22, color="#111827")),
         xaxis=dict(
-    title="",
-    tickangle=-25,
-    tickfont=dict(color="#334155", size=13),
-    gridcolor="rgba(148,163,184,0.13)"
-),
-yaxis=dict(
-    title="Predicted Salary, RUB",
-    titlefont=dict(color="#334155", size=13),
-    tickfont=dict(color="#475569", size=12),
-    gridcolor="rgba(148,163,184,0.25)"
-),
+            title="",
+            tickangle=-25,
+            tickfont=dict(color="#334155", size=13),
+            gridcolor="rgba(148,163,184,0.13)"
+        ),
+        yaxis=dict(
+            title="Predicted Salary, RUB",
+            titlefont=dict(color="#334155", size=13),
+            tickfont=dict(color="#475569", size=12),
+            gridcolor="rgba(148,163,184,0.25)"
+        ),
         coloraxis_showscale=False,
         margin=dict(l=30, r=30, t=75, b=95),
         bargap=0.28
