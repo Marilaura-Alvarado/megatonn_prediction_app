@@ -443,8 +443,6 @@ TEXT = {
         "part_time": "Частичная занятость",
         "project_contract": "Проектный контракт",
         "range": "Диапазон",
-        "resume_salary_estimator": "Resume-Based Salary Estimator",
-        "resume_salary_text": "Введите данные профиля на основе резюме и сравните расчетный диапазон зарплаты по городам.",
         "feedback_title": "Обратная связь",
         "feedback_intro": "Отправьте комментарии, ошибки или предложения прямо из интерфейса прототипа.",
         "feedback_placeholder": "Напишите обратную связь для разработчиков...",
@@ -854,16 +852,6 @@ if hasattr(st, "dialog"):
 # -----------------------------
 # Sidebar inputs
 # -----------------------------
-st.sidebar.markdown(
-    f"""
-    <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 18px; padding: 16px 18px; margin: 6px 0 18px 0;">
-        <div style="color: #f8fafc; font-size: 16px; font-weight: 900; margin-bottom: 8px;">{T["resume_salary_estimator"]}</div>
-        <div style="color: #cbd5e1; font-size: 13px; line-height: 1.5; font-weight: 600;">{T["resume_salary_text"]}</div>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-
 st.sidebar.header(T["profile_input"])
 
 available_cities = get_available_cities()
