@@ -1,6 +1,3 @@
-Yes — from now on, when we change your app, I’ll give you the **full new version of `app.py`**, not only small pieces. Below is the full updated version based on your current app, keeping the same visual style/aspect and adding only the requested changes. 
-
-```python
 import os
 import csv
 from datetime import datetime
