@@ -31,22 +31,41 @@ MODEL_MAPE = 0.243  # 24.3% validation MAPE
 FEEDBACK_FILE = "developer_feedback.csv"
 
 
-def save_developer_feedback(message):
+def save_developer_feedback(message, context=None):
     """
     Saves developer feedback locally.
+    The user does not see the stored feedback log.
     For a real deployment, this can later be connected to email,
     Google Sheets, Supabase, Firebase, GitHub Issues, or a database.
     """
+    context = context or {}
     file_exists = os.path.exists(FEEDBACK_FILE)
 
     with open(FEEDBACK_FILE, "a", newline="", encoding="utf-8") as file:
         writer = csv.writer(file)
 
         if not file_exists:
-            writer.writerow(["timestamp", "message"])
+            writer.writerow([
+                "timestamp",
+                "language",
+                "position",
+                "role_area",
+                "experience_years",
+                "schedule",
+                "employment_type",
+                "selected_cities",
+                "message"
+            ])
 
         writer.writerow([
             datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            context.get("language", ""),
+            context.get("position", ""),
+            context.get("role_area", ""),
+            context.get("experience_years", ""),
+            context.get("schedule", ""),
+            context.get("employment_type", ""),
+            context.get("selected_cities", ""),
             message
         ])
 
@@ -57,11 +76,8 @@ def save_developer_feedback(message):
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
-if "feedback_messages" not in st.session_state:
-    st.session_state.feedback_messages = []
-
-if "feedback_dialog_open" not in st.session_state:
-    st.session_state.feedback_dialog_open = False
+if "feedback_sent_success" not in st.session_state:
+    st.session_state.feedback_sent_success = False
 
 
 def login_page():
@@ -388,12 +404,10 @@ TEXT = {
         "part_time": "Part time",
         "project_contract": "Project contract",
         "range": "Range",
-        "feedback_title": "Developer Feedback",
-        "feedback_intro": "Send feedback, bugs, or suggestions directly from the prototype interface.",
+        "feedback_title": "Feedback to Developers",
+        "feedback_intro": "Send a bug, suggestion, or interface comment. Your message will be saved for future platform improvements.",
         "feedback_placeholder": "Write feedback for the developers...",
-        "feedback_welcome": "Hello! Send your feedback here. I will save it for the development team.",
-        "feedback_ack": "Thank you! Your feedback was saved for the developers.",
-        "download_feedback": "Download feedback log",
+        "feedback_success": "Feedback saved successfully. Thank you for helping improve the platform.",
         "send_feedback": "Send feedback",
         "open_feedback": "💬",
         "model_transparency": "Model Transparency",
@@ -443,12 +457,10 @@ TEXT = {
         "part_time": "Частичная занятость",
         "project_contract": "Проектный контракт",
         "range": "Диапазон",
-        "feedback_title": "Обратная связь",
-        "feedback_intro": "Отправьте комментарии, ошибки или предложения прямо из интерфейса прототипа.",
+        "feedback_title": "Обратная связь разработчикам",
+        "feedback_intro": "Отправьте ошибку, предложение или комментарий по интерфейсу. Сообщение будет сохранено для будущих улучшений платформы.",
         "feedback_placeholder": "Напишите обратную связь для разработчиков...",
-        "feedback_welcome": "Здравствуйте! Напишите обратную связь здесь. Я сохраню ее для команды разработки.",
-        "feedback_ack": "Спасибо! Ваше сообщение сохранено для разработчиков.",
-        "download_feedback": "Скачать журнал обратной связи",
+        "feedback_success": "Обратная связь успешно сохранена. Спасибо за помощь в улучшении платформы.",
         "send_feedback": "Отправить",
         "open_feedback": "💬",
         "model_transparency": "Прозрачность модели",
@@ -742,34 +754,22 @@ st.markdown(
         color: white !important;
     }
 
-    .feedback-message-assistant {
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        color: #334155;
-        padding: 10px 12px;
-        border-radius: 15px 15px 15px 4px;
-        font-size: 13px;
-        line-height: 1.45;
-        margin-bottom: 9px;
-        font-weight: 600;
+    div[data-testid="stTextArea"] textarea {
+        border-color: #475569 !important;
+        border-radius: 14px !important;
+        box-shadow: none !important;
     }
 
-    .feedback-message-user {
-        background: linear-gradient(135deg, #4f46e5 0%, #0f766e 100%);
-        color: white;
-        padding: 10px 12px;
-        border-radius: 15px 15px 4px 15px;
-        font-size: 13px;
-        line-height: 1.45;
-        margin-bottom: 9px;
-        font-weight: 600;
+    div[data-testid="stTextArea"] textarea:focus {
+        border-color: #8b5cf6 !important;
+        box-shadow: 0 0 0 3px rgba(139,92,246,0.22) !important;
     }
 
     .feedback-small-note {
-        color: #64748b;
-        font-size: 12px;
-        line-height: 1.45;
-        margin-bottom: 10px;
+        color: #94a3b8;
+        font-size: 13px;
+        line-height: 1.55;
+        margin-bottom: 16px;
         font-weight: 600;
     }
     </style>
@@ -791,27 +791,15 @@ def render_feedback_content():
         unsafe_allow_html=True
     )
 
-    if len(st.session_state.feedback_messages) == 0:
-        st.session_state.feedback_messages.append(
-            {"role": "assistant", "content": T["feedback_welcome"]}
-        )
-
-    for message in st.session_state.feedback_messages[-6:]:
-        css_class = "feedback-message-user" if message["role"] == "user" else "feedback-message-assistant"
-        st.markdown(
-            f"""
-            <div class="{css_class}">
-                {message["content"]}
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+    if st.session_state.feedback_sent_success:
+        st.success(T["feedback_success"])
+        st.session_state.feedback_sent_success = False
 
     with st.form("feedback_form", clear_on_submit=True):
         feedback_prompt = st.text_area(
             label=T["feedback_placeholder"],
             placeholder=T["feedback_placeholder"],
-            height=120,
+            height=130,
             label_visibility="collapsed"
         )
 
@@ -819,28 +807,22 @@ def render_feedback_content():
 
     if submitted_feedback:
         if feedback_prompt.strip():
-            st.session_state.feedback_messages.append(
-                {"role": "user", "content": feedback_prompt.strip()}
-            )
+            feedback_context = {
+                "language": LANG,
+                "position": role_name,
+                "role_area": role_area,
+                "experience_years": experience_years,
+                "schedule": selected_schedule_label,
+                "employment_type": selected_employment_label,
+                "selected_cities": ", ".join(final_selected_cities)
+            }
 
-            save_developer_feedback(feedback_prompt.strip())
+            save_developer_feedback(feedback_prompt.strip(), feedback_context)
 
-            st.session_state.feedback_messages.append(
-                {"role": "assistant", "content": T["feedback_ack"]}
-            )
-
-            st.success(T["feedback_ack"])
+            st.session_state.feedback_sent_success = True
+            st.rerun()
         else:
             st.warning(T["feedback_placeholder"])
-
-    if os.path.exists(FEEDBACK_FILE):
-        with open(FEEDBACK_FILE, "rb") as feedback_file:
-            st.download_button(
-                label=T["download_feedback"],
-                data=feedback_file,
-                file_name="developer_feedback.csv",
-                mime="text/csv"
-            )
 
 
 if hasattr(st, "dialog"):
@@ -1201,15 +1183,7 @@ else:
 # -----------------------------
 # Floating developer feedback bubble
 # -----------------------------
-if len(st.session_state.feedback_messages) == 0:
-    st.session_state.feedback_messages.append(
-        {"role": "assistant", "content": T["feedback_welcome"]}
-    )
-
 if st.button(T["open_feedback"], key="open_feedback_bubble"):
-    st.session_state.feedback_dialog_open = True
-
-if st.session_state.feedback_dialog_open:
     if hasattr(st, "dialog"):
         feedback_dialog()
     else:
