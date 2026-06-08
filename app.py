@@ -60,6 +60,9 @@ if "logged_in" not in st.session_state:
 if "feedback_messages" not in st.session_state:
     st.session_state.feedback_messages = []
 
+if "feedback_dialog_open" not in st.session_state:
+    st.session_state.feedback_dialog_open = False
+
 
 def login_page():
     app_dir = os.path.dirname(__file__)
@@ -359,7 +362,7 @@ TEXT = {
         "cities": "Cities",
         "all_cities": "All cities",
         "predict": "Generate salary forecast",
-        "info": "Forecast will be generated for {n} city/cities using one fixed profile.",
+        "info": "Forecast will be generated for {n} city/cities using one fixed profile. Model error range is based on MAPE = 24.3%.",
         "spinner": "Calculating salary predictions...",
         "error_position": "Please enter or select a position before predicting.",
         "error_skills": "Please select at least one skill before predicting.",
@@ -375,7 +378,7 @@ TEXT = {
         "full_ranking": "City Ranking",
         "download": "Download results as CSV",
         "how_it_works": "How it works",
-        "how_text": "Select a position, skills, employment conditions and cities. The model keeps the profile fixed and changes only the city.",
+        "how_text": "1. Enter candidate information from the resume.<br>2. Select skills, experience, schedule and employment type.<br>3. Generate salary predictions across cities.<br>4. Review the MAPE-based salary range instead of relying on one exact number.",
         "other": "Other",
         "on_site": "On-site",
         "remote": "Remote",
@@ -385,17 +388,18 @@ TEXT = {
         "part_time": "Part time",
         "project_contract": "Project contract",
         "range": "Range",
-        "resume_salary_estimator": "Resume Salary Estimator",
+        "resume_salary_estimator": "Resume-Based Salary Estimator",
         "resume_salary_text": "Enter resume-based profile information and compare the estimated salary range across cities.",
-        "developer_feedback": "Developer Feedback",
-        "developer_feedback_text": "Use the floating chat bubble in the bottom-right corner to send bugs, comments, or improvement ideas.",
         "feedback_title": "Developer Feedback",
         "feedback_intro": "Send feedback, bugs, or suggestions directly from the prototype interface.",
         "feedback_placeholder": "Write feedback for the developers...",
         "feedback_welcome": "Hello! Send your feedback here. I will save it for the development team.",
         "feedback_ack": "Thank you! Your feedback was saved for the developers.",
         "download_feedback": "Download feedback log",
-        "send_feedback": "Send feedback"
+        "send_feedback": "Send feedback",
+        "open_feedback": "💬",
+        "model_transparency": "Model Transparency",
+        "model_transparency_text": "The predicted salary is a point estimate. The displayed range is calculated using MAPE = 24.3%. The platform supports HR salary benchmarking and should not replace final salary negotiation."
     },
     "Русский": {
         "title": "AI-платформа прогнозирования зарплат",
@@ -415,7 +419,7 @@ TEXT = {
         "cities": "Города",
         "all_cities": "Все города",
         "predict": "Сформировать прогноз",
-        "info": "Прогноз будет рассчитан для {n} городов с использованием одного фиксированного профиля.",
+        "info": "Прогноз будет рассчитан для {n} городов с использованием одного фиксированного профиля. Диапазон ошибки модели основан на MAPE = 24,3%.",
         "spinner": "Расчет прогнозов зарплаты...",
         "error_position": "Пожалуйста, выберите или введите должность перед расчетом.",
         "error_skills": "Пожалуйста, выберите хотя бы один навык перед расчетом.",
@@ -431,7 +435,7 @@ TEXT = {
         "full_ranking": "Рейтинг городов",
         "download": "Скачать результаты в CSV",
         "how_it_works": "Как это работает",
-        "how_text": "Выберите должность, навыки, условия занятости и города. Модель фиксирует профиль и меняет только город.",
+        "how_text": "1. Введите данные кандидата на основе резюме.<br>2. Выберите навыки, опыт, график и тип занятости.<br>3. Сформируйте прогноз зарплаты по городам.<br>4. Используйте диапазон на основе MAPE, а не одно точное число.",
         "other": "Другое",
         "on_site": "Офис",
         "remote": "Удаленно",
@@ -441,17 +445,18 @@ TEXT = {
         "part_time": "Частичная занятость",
         "project_contract": "Проектный контракт",
         "range": "Диапазон",
-        "resume_salary_estimator": "Resume Salary Estimator",
+        "resume_salary_estimator": "Resume-Based Salary Estimator",
         "resume_salary_text": "Введите данные профиля на основе резюме и сравните расчетный диапазон зарплаты по городам.",
-        "developer_feedback": "Обратная связь разработчикам",
-        "developer_feedback_text": "Используйте плавающий чат в правом нижнем углу, чтобы отправить ошибки, комментарии или идеи по улучшению.",
         "feedback_title": "Обратная связь",
         "feedback_intro": "Отправьте комментарии, ошибки или предложения прямо из интерфейса прототипа.",
         "feedback_placeholder": "Напишите обратную связь для разработчиков...",
         "feedback_welcome": "Здравствуйте! Напишите обратную связь здесь. Я сохраню ее для команды разработки.",
         "feedback_ack": "Спасибо! Ваше сообщение сохранено для разработчиков.",
         "download_feedback": "Скачать журнал обратной связи",
-        "send_feedback": "Отправить"
+        "send_feedback": "Отправить",
+        "open_feedback": "💬",
+        "model_transparency": "Прозрачность модели",
+        "model_transparency_text": "Прогноз зарплаты является точечной оценкой. Показанный диапазон рассчитан на основе MAPE = 24,3%. Платформа поддерживает HR salary benchmarking и не заменяет финальные переговоры о зарплате."
     }
 }
 
@@ -712,17 +717,18 @@ st.markdown(
         overflow: hidden;
     }
 
-    /* Floating feedback bubble */
-    div[data-testid="stPopover"] {
+    .st-key-open_feedback_bubble {
         position: fixed !important;
         right: 28px !important;
         bottom: 28px !important;
         z-index: 999999 !important;
+        width: 72px !important;
     }
 
-    div[data-testid="stPopover"] > button {
-        width: 66px !important;
-        height: 66px !important;
+    .st-key-open_feedback_bubble button {
+        width: 68px !important;
+        height: 68px !important;
+        min-height: 68px !important;
         border-radius: 999px !important;
         padding: 0 !important;
         background: linear-gradient(135deg, #4f46e5 0%, #0f766e 100%) !important;
@@ -733,8 +739,8 @@ st.markdown(
         font-weight: 900 !important;
     }
 
-    div[data-testid="stPopover"] > button:hover {
-        transform: translateY(-3px) scale(1.03);
+    .st-key-open_feedback_bubble button:hover {
+        transform: translateY(-3px) scale(1.03) !important;
         box-shadow: 0 22px 52px rgba(15,23,42,0.40) !important;
         background: linear-gradient(135deg, #4338ca 0%, #0d9488 100%) !important;
         color: white !important;
@@ -777,6 +783,77 @@ st.markdown(
 
 
 # -----------------------------
+# Feedback dialog
+# -----------------------------
+def render_feedback_content():
+    st.markdown(
+        f"""
+        <div class="feedback-small-note">
+            {T["feedback_intro"]}
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    if len(st.session_state.feedback_messages) == 0:
+        st.session_state.feedback_messages.append(
+            {"role": "assistant", "content": T["feedback_welcome"]}
+        )
+
+    for message in st.session_state.feedback_messages[-6:]:
+        css_class = "feedback-message-user" if message["role"] == "user" else "feedback-message-assistant"
+        st.markdown(
+            f"""
+            <div class="{css_class}">
+                {message["content"]}
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    with st.form("feedback_form", clear_on_submit=True):
+        feedback_prompt = st.text_area(
+            label=T["feedback_placeholder"],
+            placeholder=T["feedback_placeholder"],
+            height=120,
+            label_visibility="collapsed"
+        )
+
+        submitted_feedback = st.form_submit_button(T["send_feedback"])
+
+    if submitted_feedback:
+        if feedback_prompt.strip():
+            st.session_state.feedback_messages.append(
+                {"role": "user", "content": feedback_prompt.strip()}
+            )
+
+            save_developer_feedback(feedback_prompt.strip())
+
+            st.session_state.feedback_messages.append(
+                {"role": "assistant", "content": T["feedback_ack"]}
+            )
+
+            st.success(T["feedback_ack"])
+        else:
+            st.warning(T["feedback_placeholder"])
+
+    if os.path.exists(FEEDBACK_FILE):
+        with open(FEEDBACK_FILE, "rb") as feedback_file:
+            st.download_button(
+                label=T["download_feedback"],
+                data=feedback_file,
+                file_name="developer_feedback.csv",
+                mime="text/csv"
+            )
+
+
+if hasattr(st, "dialog"):
+    @st.dialog(T["feedback_title"])
+    def feedback_dialog():
+        render_feedback_content()
+
+
+# -----------------------------
 # Sidebar inputs
 # -----------------------------
 st.sidebar.markdown(
@@ -784,16 +861,6 @@ st.sidebar.markdown(
     <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 18px; padding: 16px 18px; margin: 6px 0 18px 0;">
         <div style="color: #f8fafc; font-size: 16px; font-weight: 900; margin-bottom: 8px;">{T["resume_salary_estimator"]}</div>
         <div style="color: #cbd5e1; font-size: 13px; line-height: 1.5; font-weight: 600;">{T["resume_salary_text"]}</div>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-
-st.sidebar.markdown(
-    f"""
-    <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 18px; padding: 16px 18px; margin: 0 0 22px 0;">
-        <div style="color: #f8fafc; font-size: 16px; font-weight: 900; margin-bottom: 8px;">{T["developer_feedback"]}</div>
-        <div style="color: #cbd5e1; font-size: 13px; line-height: 1.5; font-weight: 600;">{T["developer_feedback_text"]}</div>
     </div>
     """,
     unsafe_allow_html=True
@@ -1041,6 +1108,17 @@ if predict_button:
         unsafe_allow_html=True
     )
 
+    st.markdown(f'<div class="section-title">{T["model_transparency"]}</div>', unsafe_allow_html=True)
+
+    st.markdown(
+        f"""
+        <div class="note-card">
+            {T["model_transparency_text"]}
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
     st.markdown(f'<div class="section-title">{T["salary_comparison"]}</div>', unsafe_allow_html=True)
 
     fig = px.bar(
@@ -1135,97 +1213,19 @@ else:
 
 
 # -----------------------------
-# Floating developer feedback chatbot
+# Floating developer feedback bubble
 # -----------------------------
 if len(st.session_state.feedback_messages) == 0:
     st.session_state.feedback_messages.append(
         {"role": "assistant", "content": T["feedback_welcome"]}
     )
 
-if hasattr(st, "popover"):
-    with st.popover("💬", use_container_width=False):
-        st.markdown(f"### {T['feedback_title']}")
-        st.markdown(
-            f"""
-            <div class="feedback-small-note">
-                {T["feedback_intro"]}
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+if st.button(T["open_feedback"], key="open_feedback_bubble"):
+    st.session_state.feedback_dialog_open = True
 
-        for message in st.session_state.feedback_messages[-6:]:
-            css_class = "feedback-message-user" if message["role"] == "user" else "feedback-message-assistant"
-            st.markdown(
-                f"""
-                <div class="{css_class}">
-                    {message["content"]}
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-
-        with st.form("floating_feedback_form", clear_on_submit=True):
-            feedback_prompt = st.text_area(
-                label=T["feedback_placeholder"],
-                placeholder=T["feedback_placeholder"],
-                height=110,
-                label_visibility="collapsed"
-            )
-
-            submitted_feedback = st.form_submit_button(T["send_feedback"])
-
-        if submitted_feedback:
-            if feedback_prompt.strip():
-                st.session_state.feedback_messages.append(
-                    {"role": "user", "content": feedback_prompt.strip()}
-                )
-
-                save_developer_feedback(feedback_prompt.strip())
-
-                st.session_state.feedback_messages.append(
-                    {"role": "assistant", "content": T["feedback_ack"]}
-                )
-
-                st.rerun()
-            else:
-                st.warning(T["feedback_placeholder"])
-
-        if os.path.exists(FEEDBACK_FILE):
-            with open(FEEDBACK_FILE, "rb") as feedback_file:
-                st.download_button(
-                    label=T["download_feedback"],
-                    data=feedback_file,
-                    file_name="developer_feedback.csv",
-                    mime="text/csv"
-                )
-
-else:
-    st.markdown(f'<div class="section-title">{T["feedback_title"]}</div>', unsafe_allow_html=True)
-    st.markdown(
-        f"""
-        <div class="note-card">
-            {T["feedback_intro"]}
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    for message in st.session_state.feedback_messages:
-        with st.chat_message(message["role"]):
-            st.write(message["content"])
-
-    feedback_prompt = st.chat_input(T["feedback_placeholder"])
-
-    if feedback_prompt:
-        st.session_state.feedback_messages.append(
-            {"role": "user", "content": feedback_prompt}
-        )
-
-        save_developer_feedback(feedback_prompt)
-
-        st.session_state.feedback_messages.append(
-            {"role": "assistant", "content": T["feedback_ack"]}
-        )
-
-        st.rerun()
+if st.session_state.feedback_dialog_open:
+    if hasattr(st, "dialog"):
+        feedback_dialog()
+    else:
+        st.markdown(f'<div class="section-title">{T["feedback_title"]}</div>', unsafe_allow_html=True)
+        render_feedback_content()
