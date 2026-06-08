@@ -470,6 +470,11 @@ TEXT = {
 
 T = TEXT[LANG]
 
+if st.session_state.feedback_sent_success:
+    if hasattr(st, "toast"):
+        st.toast(T["feedback_success"], icon="✅")
+    st.session_state.feedback_sent_success = False
+
 
 # -----------------------------
 # Main app styling
@@ -790,10 +795,6 @@ def render_feedback_content():
         """,
         unsafe_allow_html=True
     )
-
-    if st.session_state.feedback_sent_success:
-        st.success(T["feedback_success"])
-        st.session_state.feedback_sent_success = False
 
     with st.form("feedback_form", clear_on_submit=True):
         feedback_prompt = st.text_area(
@@ -1127,14 +1128,16 @@ if predict_button:
         font=dict(family="Inter", size=14, color="#334155"),
         title=dict(font=dict(size=22, color="#111827")),
         xaxis=dict(
-            title="",
+            title=dict(text=""),
             tickangle=-25,
             tickfont=dict(color="#334155", size=13),
             gridcolor="rgba(148,163,184,0.13)"
         ),
         yaxis=dict(
-            title="Predicted Salary, RUB",
-            titlefont=dict(color="#334155", size=13),
+            title=dict(
+                text="Predicted Salary, RUB",
+                font=dict(color="#334155", size=13)
+            ),
             tickfont=dict(color="#475569", size=12),
             gridcolor="rgba(148,163,184,0.25)"
         ),
@@ -1199,3 +1202,4 @@ if st.button(T["open_feedback"], key="open_feedback_bubble"):
     else:
         st.markdown(f'<div class="section-title">{T["feedback_title"]}</div>', unsafe_allow_html=True)
         render_feedback_content()
+        
